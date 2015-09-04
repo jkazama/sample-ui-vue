@@ -1,4 +1,4 @@
-locker web
+sample-ui-vue
 ---
 
 ### はじめに
