@@ -1,0 +1,15 @@
+extends ./layouts/layout.jade
+block title
+  title TOP
+block head-last
+  link(rel="stylesheet" href="/css/index.css")
+block content
+  .panel.panel-default
+    .panel-heading
+      i.fa.fa-fw.fa-check.text-success
+      | タイトル
+    .panel-body
+      p Hello World
+
+block body-last
+  script(src="/js/index.js")
