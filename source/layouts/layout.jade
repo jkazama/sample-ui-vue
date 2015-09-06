@@ -11,6 +11,28 @@ html(lang="ja")
     script(src="/js/lib.js")
     block head-last
   body
+    nav.navbar.navbar-default.navbar-static-top
+      .navbar-header
+        a.navbar-brand(href="/") App
+      ul.nav.navbar-nav
+        li.dropdown
+          a.dropdown-toggle(href="#" data-toggle="dropdown" role="button"  aria-expanded="false")
+            | "取扱い商品名 (TOP)" 
+        li: a(href="#") 取引情報
+        li: a(href="#") 口座資産
+      ul.nav.navbar-nav.navbar-right
+        li.dropdown
+          a.dropdown-toggle(href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false")
+            | ○○ 様 
+            span.caret
+          ul.dropdown-menu(role="menu")
+            li: a(href="#")
+              i.fa.fa-fw.fa-user
+              |  アカウント情報
+            li.divider
+            li: a(href="#")
+              i.fa.fa-fw.fa-sign-out
+              |  ログアウト
     .container-fluid
       block content
     block body-last

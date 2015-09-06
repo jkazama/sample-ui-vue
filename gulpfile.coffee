@@ -67,7 +67,9 @@ gulp.task "bower", ->
       .pipe(gulp.dest(path.dist.css))
     gulp.src(resource.src.fonts) # for font-awesome
       .pipe(gulp.dest(path.dist.fonts))
-    gulp.src(bowerFiles({filter: "**/*.js"}))
+    filter = (file) ->           # for bootstrap-sass-official
+      /.*\.js/.test(file) and file.indexOf("/bootstrap/") is -1
+    gulp.src(bowerFiles({filter: filter}))
       .pipe(concat("lib.js"))
       .pipe(gulp.dest(path.dist.js))
 
