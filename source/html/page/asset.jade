@@ -1,0 +1,60 @@
+extends ../layouts/layout.jade
+block title
+  title 口座資産
+block head-last
+  link(rel="stylesheet" href="/css/asset.css")
+block content
+  .row
+    .col-md-4
+      .panel.panel-default.l-panel-mock.l-panel-asset-info
+        .panel-heading
+          i.fa.fa-fw.fa-info-circle
+          |  資産残高
+        .panel-body
+    .col-md-8
+      ul.nav.nav-tabs
+        li: a(href="#deposit" data-toggle="tab") 入金
+        li.active: a(href="#withdrawal" data-toggle="tab") 出金依頼
+        li: a(href="#cashflow" data-toggle="tab") 入出金一覧
+      .tab-content
+        .tab-pane#deposit
+          |　TBD
+        .tab-pane#withdrawal.active
+          .l-withdrawal-crud
+            .alert.l-message
+            .row.l-row
+              .col-md-4
+                .input-group.l-model-absAmount
+                  input.form-control(type="text" placeholder="出金金額" v-model="item.absAmount" v-on="keydown: register | key 'enter'")
+                  span.input-group-addon 円
+              .col-md-2
+                button.btn.btn-default.btn-block(v-on="click: register") 依頼する
+            .row.l-row
+              .col-md-12
+                .alert.alert-warning 出金依頼に関わる注記文言を記載。動作確認用サンプルなので導線なり重複依頼はルーズに。
+          .l-withdrawal-list
+            .alert.l-message
+            .row
+              .col-md-12
+                .l-list-body.l-scrollable
+                  ul.list-group
+                    li.list-group-item.l-list-wait-row.l-center
+                      i.fa.fa-spin.fa-spinner
+                    li.list-group-item.clearfix(v-repeat="item : items")
+                      .l-item.l-item-day(v-text="item.requestDay | day")
+                      .l-item.l-item-type
+                        .label.label-default(v-text="item.statusType")
+                      .l-item.l-item-currency.pull-right(v-text="item.currency")
+                      .l-item.l-item-amount.pull-right(v-text="item.absAmount | currencyYen")
+        .tab-pane#cashflow
+          |　TBD
+  hr
+  .row
+    .col-md-4
+      .panel.panel-default.l-panel-mock: .panel-body
+    .col-md-4
+      .panel.panel-default.l-panel-mock: .panel-body
+    .col-md-4
+      .panel.panel-default.l-panel-mock: .panel-body
+block body-last
+  script(src="/js/asset.js")
