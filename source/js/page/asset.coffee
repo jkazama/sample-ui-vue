@@ -11,11 +11,13 @@ withdrawalCrud = new Lib.Vue.Crud
     list: withdrawalList
   data:
     item:
-      currency: "JPY"
       absAmount: ""
   created: ->
     @initialized()
   methods:
     actionSuccessMessage: -> "依頼を受け付けました"
+    registerData: ->
+      @item.currency = "JPY"
+      @item
 
 
