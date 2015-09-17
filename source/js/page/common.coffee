@@ -11,7 +11,7 @@ header = new Lib.Vue.Panel
     $nav.find("a[href='#{location.pathname}']").parent().addClass("active")
   methods:
     logout: ->
-      Lib.Session.logout()
+      @logoutSession()
       @apiPost '/logout', {}
       Lib.Log.debug 'ログアウトしました'
       location.href = "/login.html"

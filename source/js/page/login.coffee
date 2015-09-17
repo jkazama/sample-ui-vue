@@ -6,9 +6,9 @@ login = new Lib.Vue.Panel
   methods:
     login: ->
       Lib.Log.debug @loginId
-      success = (ret) ->
+      success = (ret) =>
         Lib.Log.debug "ログインに成功しました - "
-        location.href = "index.html"
+        @forward()
       failure = (error) =>
         @clearMessage()
         switch error.status
@@ -17,3 +17,7 @@ login = new Lib.Vue.Panel
           else
             @message "要求処理に失敗しました", "danger"
       @apiPost "/login", {loginId: @loginId, password: @password}, success, failure
+    forward: ->
+      @apiGet "/account/loginAccount", {}, (v) =>
+        @loginSession(v)
+        location.href = "index.html"

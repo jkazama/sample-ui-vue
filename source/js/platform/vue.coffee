@@ -1,5 +1,5 @@
 #----------------------------------
-# - vue.js.coffee -
+# - vue.coffee -
 # Vue.jsのコンポーネント拡張
 #----------------------------------
 
@@ -271,9 +271,9 @@ class Lib.Vue.Panel extends Vue
   $panel: (el) -> $(el, @$panels.main)
   # for session
   # ハッシュ情報をログインセッションへ紐付けします
-  login: (sessionHash) -> Lib.Session.login(sessionHash)
+  loginSession: (sessionHash) -> Lib.Session.login(sessionHash)
   # ログインセッション情報を破棄します
-  logout: -> Lib.Session.logout()
+  logoutSession: -> Lib.Session.logout()
   # セッション情報を取得します。key未指定時はログインセッションハッシュを返します
   sessionValue: (key = null) -> Lib.Session.value(key)
   # セッション情報を取得します。key未指定時はログインセッションハッシュを返します
@@ -286,7 +286,6 @@ class Lib.Vue.Panel extends Vue
 # (API側でPagingListを返す必要があります)
 # 本クラスを利用する際は初期化時に以下の設定が必要です。
 # ・path属性の定義
-# ・searchDataメソッドの設定
 # ・createdメソッド内でinitializedを呼び出す
 # ---
 # - 拡張属性[attributes] -

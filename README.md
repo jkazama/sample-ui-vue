@@ -5,7 +5,10 @@ sample-ui-vue
 
 [BootStrap](http://getbootstrap.com/) / [Vue.js](http://jp.vuejs.org/) を元にしたプロジェクトWebリソース(HTML/CSS/JS)です。  
 
-> 作成中です。とりあえず`Jade + Sass + CofeeScript`な`gulpfile`定義だけ。
+> 作成中です。
+
+旧来型のアプローチ(ページを細かく分割して、JSファイルは最低限しか束ねない)で実装しています。  
+*SPAではなく、モジュールベースのアーキテクチャなども利用していない。*
 
 #### ビルド環境構築
 
@@ -26,8 +29,7 @@ sample-ui-vue
 ### 開発の流れ
 
 基本的にAltリソース(.jade/.sass/.coffee)をWebリソース(.html/.css/.js)へGulpでリアルタイム変換させながら開発をしていきます。
-
-動作確認はGulpのserver機能を利用してブラウザ上で行います。  
+動作確認はGulpで独自にWebサーバを立ち上げた後、ブラウザ上で行います。  
 
 #### Altリソースの解説
 
@@ -35,9 +37,9 @@ sample-ui-vue
 - [Sass](http://sass-lang.com/)
 - [CoffeeScript](http://coffeescript.org/)
 
-*※`Sass SCSS`でなく`Sass`を利用しているのは単純にインデント + 閉じ無しで統一したかったためです。*
+*※「Sass SCSS」でなく「Sass」を利用しているのは単純にインデント + 閉じ無しで統一したかったためです。*
 
-#### Altリソースの変更監視 / 起動
+#### Altリソースの変更監視 / Webサーバ起動
 
 + コンソールで本ディレクトリ(web)直下へ移動し、「`gulp`」を実行
 

@@ -49,7 +49,7 @@ bowerFiles  = require "main-bower-files"
 browserSync = require("browser-sync").create()
 
 # build and watch for developer
-gulp.task "default", ["clean", "server", "build"]
+gulp.task "default", ["clean", "build", "server"]
 
 # clean dist
 gulp.task "clean", -> del.sync ["#{path.dist.root}/*", "!#{path.dist.root}/.git*"], { dot: true, force: true }
