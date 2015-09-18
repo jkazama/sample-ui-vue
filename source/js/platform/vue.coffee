@@ -16,6 +16,8 @@
 # 例: v-text="createDay | day"
 # 参考: http://jp.vuejs.org/guide/custom-filter.html
 
+# Text Filter
+
 # 値が未設定の場合に引数へ与えた標準ラベルを表示します。
 Vue.filter 'defaultText', (v, label = "-") -> v ? label
 
@@ -62,6 +64,22 @@ Vue.filter 'quantity', (v) ->
 # 割合の末尾に%を付与します。
 Vue.filter 'rate', (v) -> if v then v + " %" else ""
 
+# Options Filter
+
+# selectのoptionsへ設定するオブジェクト一覧を生成します。
+# 通常のオブジェクト一覧をtext/valueを保持するオブジェクト一覧へ変換します。
+# ---
+# list - key/value変換対象オブジェクト一覧
+# defaultLabel - 指定時は値が空のラベル要素を追加します
+# valueField - 指定したオブジェクトのvalueへバインドするフィールド名
+# textField - 指定したオブジェクトのtextへバインドするフィールド名(未指定時はvalueFieldの値)
+# defaultLabel - valueFieldの値が未設定時の文言
+convertOptions = (v, valueField, textField = null, defaultLabel = null) ->
+  v.map (item) ->
+    value: item[valueName]?.toString()
+    text: (item[textName ? valueName]?.toString() ? (defaultLabel ? '--'))
+Vue.filter 'extract', convertOptions
+
 ## Directive
 # Vue.jsのカスタムディレクティブを定義します。
 # カスタムディレクティブはHTMLエレメントに「v-datepicker」など、新しい拡張属性を加えるものです。
@@ -86,6 +104,8 @@ Vue.directive "datepicker",
       if day isnt jDay
         if jDay.length in [4, 6, 8] then @vm.$set(@expression, jDay)
         else @vm.$set(@expression, null)
+  unbind: ->
+    $(@el).datepickerJpn()?.off "change"
   # VM側データ変更検知
   update: (day) ->
     jDay = @$input.val()?.replace(/\//g, '')
