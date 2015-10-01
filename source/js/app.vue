@@ -32,7 +32,7 @@ Param = require "./variables.coffee"
 Lib = require "./platform/plain.coffee"
 Option = require "./platform/vue-option.coffee"
 # ヘッダパネル
-module.exports = new Option.PanelBuilder(
+module.exports = new Option.ComponentBuilder(
   data: ->
     logined: false
   created: ->
@@ -49,7 +49,7 @@ module.exports = new Option.PanelBuilder(
       e.preventDefault()
       @logined = false
       @logoutSession()
-      @apiPost '/logout', {}
+      @apiPost '/logout', {}, ((v) -> true), ((e)-> false)
       Lib.Log.debug 'ログアウトしました'
       @$route.router.go("/login")
 ).build()

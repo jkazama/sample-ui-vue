@@ -16,10 +16,8 @@
 <script lang="coffee">
 Lib = require "../platform/plain.coffee"
 Option = require "../platform/vue-option.coffee"
-module.exports = new Option.PanelBuilder(
-  attr:
-    el:
-      main: ".l-panel-login"
+module.exports = new Option.ComponentBuilder(
+  attr: {el: {main: ".l-panel-login"}}
   data: ->
     loginId: ""
     password: ""

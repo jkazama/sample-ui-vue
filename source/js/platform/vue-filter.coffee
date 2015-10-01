@@ -20,43 +20,43 @@ module.exports = ->
 
   # 日付を「年月日」形式のフォーマットへ変換します。
   Vue.filter 'dayJp', (v) -> if v then moment(v).format("YYYY年MM月DD日") else ""
-
+  
   # 日時型を「yyyy/MM/dd hh:mm」形式へ変換します。引数にtrueを指定したときは秒も含めます。
   Vue.filter 'date', (v, s = "true") ->
     fmt = "YYYY/MM/DD HH:mm"
     if s is "true" then fmt = fmt + ":ss"
     if v then moment(v).format(fmt) else ""
-
+    
   # 日時型を「hh:mm:ss」形式へ変換します。
   Vue.filter 'time', (v) -> if v then moment(v).format("HH:mm:ss") else ""
-
+  
   # 日付を「yyyy/MM」形式へ変換します。
   Vue.filter 'month', (v) -> if v then moment(v).format("YYYY/MM") else ""
-
+  
   # 日付を「yyyy年MM月」形式へ変換します。
   Vue.filter 'monthJp', (v) -> if v then moment(v).format("YYYY年MM月") else ""
-
+  
   # 金額を「,」区切りへ変換します。
   Vue.filter 'currencyYen', (v) ->
     if v then v.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,')
     else if v?.toString() is "0" then "0" else ""
-
+      
   # 金額を「,」区切りへ変換します。末尾に円を付与します。
   Vue.filter 'currencyYenWith', (v) ->
     unit = " 円"
     if v then v.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') + unit
     else if v?.toString() is "0" then "0" + unit else ""
-
+      
   # 数量を「,」区切りへ変換します。
   Vue.filter 'quantity', (v) ->
     if v then v.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,')
     else if v?.toString() is "0" then "0" else ""
-
+      
   # 割合の末尾に%を付与します。
   Vue.filter 'rate', (v) -> if v then v + " %" else ""
-
+  
   # Options Filter
-
+  
   # selectのoptionsへ設定するオブジェクト一覧を生成します。
   # 通常のオブジェクト一覧をtext/valueを保持するオブジェクト一覧へ変換します。
   # ---

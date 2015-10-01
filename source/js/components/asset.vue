@@ -45,7 +45,7 @@
 <script lang="coffee">
 Vue = require "vue"
 Option = require "../platform/vue-option.coffee"
-module.exports = new Option.PanelBuilder(
+module.exports = new Option.ComponentBuilder(
   components:
     "asset-withdrawal-crud": require("./partials/asset-withdrawal-crud.vue")
     "asset-withdrawal-list": require("./partials/asset-withdrawal-list.vue")

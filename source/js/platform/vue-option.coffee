@@ -1,21 +1,20 @@
-### Vueパネル 基底クラス ###
+### Vue向け オプションビルダー ###
 
 Vue = require "vue"
 Param = require "../variables.coffee"
 Lib = require "./plain.coffee"
 
-# Vue向けOptionbビルダークラス
+# Vue向けOptionビルダークラス
 # ファイルアップロードや確認ダイアログ/単純表示等、シンプルな処理が必要なときは
-# 本クラスを元にVue.jsオブジェクトを作成してください。
-# 作成方式は通常のVue.jsと同様です。(コンストラクタ引数へハッシュ渡しされた情報を元に構築されます)
+# 本インスタンスのbuild実行戻り値(optionハッシュ)を元にVue.jsオブジェクトを作成してください。
+# 作成方式は通常のVue.jsと同様です。(new Vue / Vue.extend / Vue.component)
+# 本クラスを利用する際は初期化時に以下の設定が必要です。
+# ・createdメソッド内でinitializedを呼び出す
 # ---
-# - 拡張属性[attributes] -
+# - 拡張属性[attr] -
+# el.main:    jQuery機能を利用する際のルートEL指定
 # el.message: メッセージ表示用のエレメント属性(未指定時は.l-message)
-# - グローバル属性 -
-# $message: メッセージ要素のJQueryオブジェクト
-# - パネル(JQuery)[$panels] -
-# main: el指定されたパネルのJQueryオブジェクト
-# - 標準API(差し替えする際は継承した先で上書きする必要有)
+# - 標準API
 # show: パネルを表示する
 # hide: パネルを非表示にする
 # clear: グローバルエラー及び/コントロールエラーを初期化する
@@ -32,16 +31,17 @@ Lib = require "./plain.coffee"
 # paramArray:　配列(オブジェクト)をフラットなパラメタ要素へ展開
 # renderWarning: 例外情報を画面へ反映する
 # renderColumnWarning: コントロール単位の画面例外反映
-class PanelBuilder
+class ComponentBuilder
   optionsOrigin: {}
   options: {}
-  # 初期化コンストラクタ。el未指定時は「.l-panel-main」を利用
+  # 初期化コンストラクタ
   constructor: (options) ->
     if !options then return Lib.Log.error "コンストラクタ引数は必須です"
     @optionsOrigin = options ? {}
     @options = _.clone options
     @options.attr = @options.attr ? {}
     @options.attr.el = @options.attr.el ? {}
+    @options.attr.el.main = @options.attr.el.main ? "body"
     @options.attr.el.message = @options.attr.el.message ? ".l-message"
     @options.data = @options.data ? -> true
     @options.methods = _.clone @defaultMethods
@@ -188,16 +188,16 @@ class PanelBuilder
     hasAuthority: (id) ->
       list = @sessionValue()?.authorities
       if list then _.contains(list, 'ROLE_' + id) else false
-module.exports.PanelBuilder = PanelBuilder
+module.exports.ComponentBuilder = ComponentBuilder
 
-# 検索を前提としたVueクラス
+# 検索を前提としたVueOptionビルダークラス
 # 一覧パネル等で利用してください。ページング検索(自動ロード方式)もサポートしています。
 # (API側でPagingListを返す必要があります)
 # 本クラスを利用する際は初期化時に以下の設定が必要です。
 # ・path属性の定義
 # ・createdメソッド内でinitializedを呼び出す
 # ---
-# - 拡張属性[attributes] -
+# - 拡張属性[attr] -
 # initialSearch: 初回検索を行うか(未指定時はtrue)
 # paging: ページング検索を行うか(未指定時はfalse)
 # el.search: 検索条件要素(未指定時は.l-panel-search)
@@ -206,23 +206,16 @@ module.exports.PanelBuilder = PanelBuilder
 # el.listWaitRow: 検索中の処理待ちアイコン要素(未指定時は.l-list-wait-row)
 # - グローバル属性 -
 # path: 検索APIパス(必須: 標準でapiUrlへ渡されるパス)
-# $waitRow: 処理待ちアイコン要素のJQueryオブジェクト
-# - パネル(JQuery)[$panels] -
-# search: el.searchで指定された要素のJQueryオブジェクト
-# body: el.listBodyで指定された要素のJQueryオブジェクト
 # - 予約Data[data] -
 # searchFlag: 検索パネル表示状態
 # items: 検索結果一覧
 # page: ページング情報
 # - 拡張メソッド[methods] -
-# initSearch: 検索パネルを表示する際の初期化処理
-# toggleSearch: 検索条件パネルを開閉する
-# closeSearch: 検索条件パネルを閉じる
 # search: 検索する
 # searchData: 検索条件をハッシュで生成する
 # searchPath: 検索時の呼び出し先URLパスを生成する(apiUrlへ渡されるパス)
 # layoutSearch: 検索後のレイアウト調整を行う(検索結果は@itemsに格納済)
-class PanelListBuilder extends PanelBuilder
+class PanelListBuilder extends ComponentBuilder
   # 初期化時のattributes設定を行います
   bindOptions: ->
     attr = @options.attr
@@ -332,7 +325,7 @@ class PanelListBuilder extends PanelBuilder
       # 必要に応じて同名のメソッドで拡張実装してください
 module.exports.PanelListBuilder = PanelListBuilder
 
-# 特定情報の登録/変更/削除を前提としたVueクラス
+# 特定情報の登録/変更/削除を前提としたOptionビルダークラス
 # 情報に対するCRUD目的のパネルで利用してください。
 # 本クラスを利用する際は初期化時に以下の設定が必要です。
 # ・path属性の定義
@@ -371,7 +364,7 @@ module.exports.PanelListBuilder = PanelListBuilder
 # actionSuccessAfter: 成功時のイベント後処理
 # actionFailure: 失敗時のイベント処理
 # actionFailureAfter: 失敗時のイベント処理
-class PanelCrudBuilder extends PanelBuilder
+class PanelCrudBuilder extends ComponentBuilder
   # 初期化時のattributes設定を行います
   bindOptions: ->
     attr = @options.attr
