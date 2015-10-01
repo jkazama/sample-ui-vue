@@ -1,24 +1,27 @@
 #----------------------------------
-# - plain.js.coffee -
+# - plain.coffee -
 # JS全般で利用されるグローバル処理定義
 #----------------------------------
 
+Constants = require "../constants.coffee"
+Param     = require "../variables.coffee"
+
 ## ログユーティリティ
 # variables.coffeeでログ出力レベルを変更させる事が可能です。
-class Lib.Log
-  @debug: (msg) ->
-    if @valid(Lib.Level.DEBUG) then @console "[DEBUG] ", msg
-  @info: (msg) ->
-    if @valid(Lib.Level.INFO) then @console "[INFO] ", msg
-  @warn: (msg) ->
-    if @valid(Lib.Level.WARN) then @console "[WARN] ", msg
-  @error: (msg) ->
-    if @valid(Lib.Level.ERROR) then @console "[ERROR] ", msg
-  @valid: (checkLevel) ->
+Log =
+  debug: (msg) ->
+    if @valid(Constants.Level.DEBUG) then @console "[DEBUG] ", msg
+  info: (msg) ->
+    if @valid(Constants.Level.INFO) then @console "[INFO] ", msg
+  warn: (msg) ->
+    if @valid(Constants.Level.WARN) then @console "[WARN] ", msg
+  error: (msg) ->
+    if @valid(Constants.Level.ERROR) then @console "[ERROR] ", msg
+  valid: (checkLevel) ->
     Param.System.logLevel <= checkLevel
-  @console: (prefix, obj) ->
+  console: (prefix, obj) ->
     if (console?) then console.log prefix, obj
-
+module.exports.Log = Log
 
 ## 非同期API要求ユーティリティ
 # JSON形式での接続前提とします。
@@ -29,56 +32,56 @@ $.ajaxSetup
   xhrFields:
     withCredentials: true
 
-class Lib.Ajax
+module.exports.Ajax =
   # GET形式でサーバ側へリクエスト処理をします。(非同期)
-  @get: (url, data = {}, success = @handleSuccess, failure = @handleFailure) =>
+  get: (url, data = {}, success = @handleSuccess, failure = @handleFailure) ->
     $.ajax
       type: "GET"
       url: @requestUrl(url)
       data: data
-    .done (data) ->
+    .done (data) =>
       if success? then success(data)
     .fail (error) =>
       @handlePreFailure(error)
       if failure? then failure(error)
   # GET形式でサーバ側へリクエスト処理をします。(同期)
-  @getSync: (url, data = {}, success = @handleSuccess, failure = @handleFailure) =>
+  getSync: (url, data = {}, success = @handleSuccess, failure = @handleFailure) ->
     $.ajax
       type: "GET"
       url: @requestUrl(url)
       data: data
       async: false
-    .done (data) ->
+    .done (data) =>
       if success? then success(data)
     .fail (error) =>
       @handlePreFailure(error)
       if failure? then failure(error)
   # POST形式でサーバ側へリクエスト処理をします。(非同期)
-  @post: (url, data = {}, success = @handleSuccess, failure = @handleFailure, async = true) =>
+  post: (url, data = {}, success = @handleSuccess, failure = @handleFailure, async = true) ->
     $.ajax
       type: "POST"
       url: @requestUrl(url)
       data: data
-    .done (data) ->
+    .done (data) =>
       if success? then success(data)
     .fail (error) =>
       @handlePreFailure(error)
       if failure? then failure(error)
   # POST形式でサーバ側へリクエスト処理をします。(同期)
-  @postSync: (url, data = {}, success = @handleSuccess, failure = @handleFailure) =>
+  postSync: (url, data = {}, success = @handleSuccess, failure = @handleFailure) ->
     $.ajax
       type: "POST"
       url: @requestUrl(url)
       data: data
       async: false
-    .done (data) ->
+    .done (data) =>
       if success? then success(data)
     .fail (error) =>
       @handlePreFailure(error)
       if failure? then failure(error)
   # 指定したURLに対するアップロード処理をします。
   # 指定されたハッシュデータはFormDataへ紐付けられて送信されます。
-  @upload: (url, data, success = @handleSuccess, failure = @handleFailure) =>
+  upload: (url, data, success = @handleSuccess, failure = @handleFailure) ->
     form = new FormData()
     for k, v of data
       form.append k, v
@@ -89,60 +92,59 @@ class Lib.Ajax
       contentType: false
       data: form
       timeout: Param.Api.timeoutUpload
-    .done (data) ->
+    .done (data) =>
       if success? then success(data)
     .fail (error) =>
       @handlePreFailure(error)
       if failure? then failure(error)
   # 接続先URLパスを整形します。
-  @requestUrl: (url) -> url
+  requestUrl: (url) -> url
   # リクエスト成功時の標準処理を行います。
-  @handleSuccess: (data) ->
-    Lib.Log.info data
+  handleSuccess: (data) -> Log.info data
   # リクエスト失敗時の事前処理を行います。
-  @handlePreFailure: (error) ->
+  handlePreFailure: (error) ->
     switch error.status
       when 0
-        Lib.Log.error "接続先が見つかりませんでした"
+        Log.error "接続先が見つかりませんでした"
       when 200
-        Lib.Log.error "戻り値の解析に失敗しました。JSON形式で応答が返されているか確認してください"
+        Log.error "戻り値の解析に失敗しました。JSON形式で応答が返されているか確認してください"
       when 400
-        Lib.Log.warn error.statusText
+        Log.warn error.statusText
       when 401
-        Lib.Log.error "機能実行権限がありません"
+        Log.error "機能実行権限がありません"
       else
-        Lib.Log.error error.statusText
+        Log.error error.statusText
   # リクエスト失敗時の処理を行います。
-  @handleFailure: (error) ->
+  handleFailure: (error) ->
     # nothing.
 
 ## UI側セッションユーティリティ
 # WebStorage(LocalStrage)利用を前提としたセッション概念を提供します。
-class Lib.Session
+module.exports.Session =
   # ログインさせます。引数に与えたハッシュはWebStrage(Local)に保存されます。
-  @login: (sessionHash) ->
+  login: (sessionHash) ->
     @logout()
     @valueSet(Param.Session.key, sessionHash)
   # ログイン中のセッション情報を取得します。key未指定時はログイン情報を返します。
-  @value: (key=null) ->
+  value: (key=null) ->
     v = localStorage.getItem(key ? Param.Session.key)
     if v then JSON.parse(v) else null
   # セッション情報に値を設定します。リークしやすいため、安易な利用は避けてください。
-  @valueSet: (key, value) ->
+  valueSet: (key, value) ->
     localStorage.setItem(key, if value then JSON.stringify(value) else null)
   # ログアウトさせます。個別にvalueSetした情報は忘れずにdeleteしてください。
-  @logout: ->
+  logout: ->
     @delete()
   # セッション情報の値を削除します。
-  @delete: (key = null) ->
+  delete: (key = null) ->
     localStorage.removeItem(key ? Param.Session.key)
   # セッションを持っているか
-  @hasSession: -> @value()
+  hasSession: -> @value()
 
 ## グローバルユーティリティ
-class Lib.Utils
+module.exports.Utils =
   # URLの引数を解析してハッシュを返します
-  @parseQuery: (url = null) ->
+  parseQuery: (url = null) ->
     target = url ? window.location.search
     if !target then return {}
     idx = target.indexOf('?')
@@ -157,7 +159,7 @@ class Lib.Utils
   # 引数に与えたハッシュオブジェクトでネストされたものを「.」付の一階層へ変換します。(引数は上書きしません)
   # {a: {b: {c: 'd'}}} -> {'a.b.c': 'd'}
   # see http://stackoverflow.com/questions/19098797/fastest-way-to-flatten-un-flatten-nested-json-objects
-  @flatten: (data) ->
+  flatten: (data) ->
     ret = {}
     recurse = (v, prop) ->
       if Object(v) isnt v

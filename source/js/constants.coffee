@@ -5,7 +5,7 @@
 
 #### Enum
 ## Logging Levels
-Lib.Level =
+module.exports.Level =
   DEBUG: 10
   INFO: 20
   WARN: 30

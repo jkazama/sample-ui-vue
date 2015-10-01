@@ -1,13 +1,13 @@
 {
   "name": "sample-ui-vue",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "",
-  "main": "",
+  "main": "source/js/main.coffee",
   "scripts": {
     "test": "Hello"
   },
-  "author": "",
-  "license": "",
+  "author": "jkazama",
+  "license": "MIT",
   "devDependencies": {
     "gulp": "~3.9.0",
     "gulp-load-plugins": "~0.10.0",
@@ -29,6 +29,23 @@
     "gulp-sass-lint": "~1.0.1",
     "gulp-pleeease": "~1.2.0",
     "gulp-uglify": "~1.4.0",
+    "webpack": "~1.12.2",
+    "webpack-stream": "~2.1.0",
+    "html-loader": "~0.3.0",
+    "template-html-loader": "~0.0.3",
+    "css-loader": "~0.19.0",
+    "style-loader": "~0.12.4",
+    "sass-loader": "~2.0.1",
+    "jade-loader": "~0.7.1",
+    "coffee-loader": "~0.7.2",
+    "vue-loader": "~3.0.3",
     "browser-sync": "~2.8.2"
+  },
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "lodash": "~3.10.1",
+    "moment": "~2.10.6",
+    "vue": "~0.12.14",
+    "vue-router": "~0.6.0"
   }
 }
