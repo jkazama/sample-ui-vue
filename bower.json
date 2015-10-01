@@ -2,14 +2,12 @@
   "name": "My Application",
   "version": "0.2.0",
   "private": true,
-  "main": "index.js",
+  "main": "main.js",
   "dependencies": {
-    "jquery": "~2.1.4",
+  	"jquery": "~2.1.4",
     "lodash": "~3.10.1",
-    "moment": "~2.10.6",
     "bootstrap-sass-official": "~3.3.5",
     "bootstrap-datepicker": "~1.4.0",
-    "fontawesome": "~4.4.0",
-    "vue": "~0.12.14"
+    "fontawesome": "~4.4.0"
   }
 }
