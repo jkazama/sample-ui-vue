@@ -4,9 +4,6 @@
 # 例: v-text="createDay | day"
 # 参考: http://jp.vuejs.org/guide/custom-filter.html
 module.exports = ->
-  Vue = require("vue")
-  moment = require("moment")
-
   # Text Filter
 
   # 値が未設定の場合に引数へ与えた標準ラベルを表示します。

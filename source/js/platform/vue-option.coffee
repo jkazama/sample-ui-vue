@@ -1,6 +1,5 @@
 ### Vue向け オプションビルダー ###
 
-Vue = require "vue"
 Param = require "../variables.coffee"
 Lib = require "./plain.coffee"
 
@@ -91,7 +90,7 @@ class ComponentBuilder
         @$message().text message
         @$message().removeClassRegex /\btext-\S+/g
         @$message().removeClassRegex /\balert-\S+/g
-        @$message().addClass "alert-" + type
+        @$message().addClass "alert-#{type} alert-dismissible"
         @$message().show(speed)
         Lib.Log.debug message
       else @$message().hide()

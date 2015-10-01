@@ -4,7 +4,6 @@
 # 例: input type="text" v-datepicker="item.testDay"
 # 参考: http://jp.vuejs.org/guide/custom-directive.html
 module.exports = ->
-  Vue = require("vue")
   # v-datepickerを定義したコンポーネントを日付選択コンポーネントへ変更します。
   # bootstrap-datepickerを有効とします。
   # 形式   [datepickerオプション] : [フィールドキー]

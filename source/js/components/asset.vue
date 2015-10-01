@@ -43,7 +43,6 @@
 </template>
 
 <script lang="coffee">
-Vue = require "vue"
 Option = require "../platform/vue-option.coffee"
 module.exports = new Option.ComponentBuilder(
   components:

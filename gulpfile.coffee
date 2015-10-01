@@ -40,17 +40,21 @@ browserSync   = require("browser-sync").create()
 # build and watch for developer
 gulp.task "default", ["build", "server"]
 
-## build all
+## build for developer
 gulp.task "build", ["clean", "bower", "build:jade", "build:sass", "build:webpack", "build:static"]
+
+## build production
+gulp.task "build-prod", ["clean", "bower-prod", "build:jade", "build:sass", "build:webpack-prod", "build:static"]
 
 # clean dist
 gulp.task "clean", -> del.sync ["#{paths.dist.root}/*", "!#{paths.dist.root}/.git*"], { dot: true, force: true }
 
 # build Vendor UI Library (bower.json) [Load/Concat]
-gulp.task "bower", ->
+loadBower = (production) ->
   bower.commands.install().on "end", ->
     gulp.src(bowerFiles({filter: "**/*.css"}))
       .pipe($.concat("vendor.css"))
+      .pipe($.pleeease())
       .pipe(gulp.dest(paths.dist.css))
     gulp.src(resource.src.fonts) # for font-awesome
       .pipe(gulp.dest(paths.dist.fonts))
@@ -58,14 +62,26 @@ gulp.task "bower", ->
       /.*\.js/.test(file) and $.slash(file).indexOf("/bootstrap/") is -1
     gulp.src(bowerFiles({filter: filter}))
       .pipe($.concat("vendor.js"))
+      .pipe($.if(production, $.uglify()))
       .pipe(gulp.dest(paths.dist.js))
+gulp.task "bower", -> loadBower(false)
+gulp.task "bower-prod", -> loadBower(true)
 
 # compile Webpack [ Coffee / Vue -> SPA(main.js) ]
-gulp.task "build:webpack", ->
+buildWebpack = (production) ->
+  plugins =
+    if production
+      [
+        new webpack.ResolverPlugin(new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("bower.json", ["main"]))
+        new webpack.optimize.UglifyJsPlugin({compress: { warnings: false　}})
+      ]
+    else
+      [new webpack.ResolverPlugin(new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("bower.json", ["main"]))]
   gulp.src([resource.src.webpack.coffee, resource.src.webpack.vue])
     .pipe(webpackStream({
       entry: "#{paths.src.js}/main.coffee"
       output: {filename: "main.js"}
+      watch: !production
       module:
         loaders: [
           {test: /\.coffee$/, loader: "coffee"}
@@ -73,12 +89,12 @@ gulp.task "build:webpack", ->
         ]
       resolve:
         moduleDirectories: ["node_modules", "bower_components"]
-      plugins:[
-        new webpack.ResolverPlugin(new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("bower.json", ["main"]))
-      ]
+      plugins: plugins
      }, webpack))
     .pipe(gulp.dest(paths.dist.js))
     .pipe(browserSync.stream())  
+gulp.task "build:webpack", -> buildWebpack(false)
+gulp.task "build:webpack-prod", -> buildWebpack(true)
 
 # compile Jade -> HTML
 gulp.task "build:jade", ->
@@ -117,8 +133,6 @@ gulp.task "server", ->
   })
   # watch for source
   gulp.watch resource.src.bower,           ["bower"]
-  gulp.watch resource.src.webpack.coffee,  ["build:webpack"]
-  gulp.watch resource.src.webpack.vue,     ["build:webpack"]
   gulp.watch resource.src.jade,            ["build:jade"]
   gulp.watch resource.src.sass,            ["build:sass"]
   gulp.watch resource.src.static,          ["build:static"]

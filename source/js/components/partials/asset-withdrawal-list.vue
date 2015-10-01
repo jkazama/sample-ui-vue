@@ -1,14 +1,4 @@
-<style lang="sass">
-.tab-pane
-  padding: 10px 0
-
-.l-list-body
-  height: 210px
-
-.l-panel-asset-info
-  .panel-body
-    height: 300px
-</style>
+<style lang="sass"></style>
 
 <template lang="jade">
 .l-withdrawal-list
@@ -31,10 +21,7 @@
 Option = require "../../platform/vue-option.coffee"
 module.exports = new Option.PanelListBuilder(
   path: "/asset/cio/unprocessedOut/"
-  attr:
-    el:
-      main: ".l-withdrawal-list"
-  created: ->
-    @initialized()
+  attr: {el: {main: ".l-withdrawal-list"}}
+  created: -> @initialized()
 ).build()
 </script>

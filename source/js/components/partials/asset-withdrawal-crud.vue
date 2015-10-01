@@ -2,7 +2,7 @@
 
 <template lang="jade">
 .l-withdrawal-crud
-  .alert.l-message
+  .alert.alert-dismissible.l-message
   .row.l-row
     .col-md-4
       .input-group.l-model-absAmount
@@ -19,10 +19,8 @@
 Option = require "../../platform/vue-option.coffee"
 module.exports = new Option.PanelCrudBuilder(
   path: "/asset/cio/withdraw"
-  attr:
-    el:
-      main: ".l-withdrawal-crud"
-  data:
+  attr: {el: {main: ".l-withdrawal-crud"}}
+  data: ->
     item:
       absAmount: ""
   created: ->

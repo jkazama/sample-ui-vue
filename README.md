@@ -34,6 +34,7 @@ sample-ui-vue
     - application.ymlの`extension.security.auth.enabled`をtrueにして起動すればログイン機能の確認も可能
 1. コンソールで本ディレクトリ直下へ移動し、「`gulp`」を実行
     - 確認用のブラウザが自動的に起動する。うまく起動しなかったときは「http://localhost:3000」へアクセス
+    - 画面が白く表示されてしまう時はブラウザの更新を押してみてください
 
 ### 開発の流れ
 
