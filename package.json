@@ -1,10 +1,11 @@
 {
   "name": "sample-ui-vue",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "",
   "main": "source/js/main.coffee",
   "scripts": {
-    "test": "Hello"
+    "start": "gulp",
+    "build": "gulp build"
   },
   "author": "jkazama",
   "license": "MIT",
@@ -40,12 +41,5 @@
     "coffee-loader": "~0.7.2",
     "vue-loader": "~3.0.3",
     "browser-sync": "~2.8.2"
-  },
-  "dependencies": {
-    "jquery": "~2.1.4",
-    "lodash": "~3.10.1",
-    "moment": "~2.10.6",
-    "vue": "~0.12.14",
-    "vue-router": "~0.6.0"
   }
 }

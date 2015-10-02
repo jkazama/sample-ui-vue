@@ -33,7 +33,7 @@ $.ajaxSetup
     withCredentials: true
 
 module.exports.Ajax =
-  # GET形式でサーバ側へリクエスト処理をします。(非同期)
+  # GET形式でサーバ側へリクエスト処理をします。
   get: (url, data = {}, success = @handleSuccess, failure = @handleFailure) ->
     $.ajax
       type: "GET"
@@ -44,36 +44,12 @@ module.exports.Ajax =
     .fail (error) =>
       @handlePreFailure(error)
       if failure? then failure(error)
-  # GET形式でサーバ側へリクエスト処理をします。(同期)
-  getSync: (url, data = {}, success = @handleSuccess, failure = @handleFailure) ->
-    $.ajax
-      type: "GET"
-      url: @requestUrl(url)
-      data: data
-      async: false
-    .done (data) =>
-      if success? then success(data)
-    .fail (error) =>
-      @handlePreFailure(error)
-      if failure? then failure(error)
-  # POST形式でサーバ側へリクエスト処理をします。(非同期)
+  # POST形式でサーバ側へリクエスト処理をします。
   post: (url, data = {}, success = @handleSuccess, failure = @handleFailure, async = true) ->
     $.ajax
       type: "POST"
       url: @requestUrl(url)
       data: data
-    .done (data) =>
-      if success? then success(data)
-    .fail (error) =>
-      @handlePreFailure(error)
-      if failure? then failure(error)
-  # POST形式でサーバ側へリクエスト処理をします。(同期)
-  postSync: (url, data = {}, success = @handleSuccess, failure = @handleFailure) ->
-    $.ajax
-      type: "POST"
-      url: @requestUrl(url)
-      data: data
-      async: false
     .done (data) =>
       if success? then success(data)
     .fail (error) =>

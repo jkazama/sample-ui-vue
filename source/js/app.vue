@@ -33,7 +33,7 @@ Lib = require "./platform/plain.coffee"
 Option = require "./platform/vue-option.coffee"
 # ヘッダパネル
 module.exports = new Option.ComponentBuilder(
-  data: ->
+  data:
     logined: false
   created: ->
     @initialized()
