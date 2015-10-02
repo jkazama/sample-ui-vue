@@ -11,7 +11,6 @@ Lib = require "./plain.coffee"
 # ・createdメソッド内でinitializedを呼び出す
 # ---
 # - 拡張属性[attr] -
-# el.main:    jQuery機能を利用する際のルートEL指定
 # el.message: メッセージ表示用のエレメント属性(未指定時は.l-message)
 # - 標準API
 # show: パネルを表示する
@@ -40,9 +39,11 @@ class ComponentBuilder
     @options = _.clone options
     @options.attr = @options.attr ? {}
     @options.attr.el = @options.attr.el ? {}
-    @options.attr.el.main = @options.attr.el.main ? "body"
     @options.attr.el.message = @options.attr.el.message ? ".l-message"
-    @options.data = @options.data ? -> true
+    el = if typeof options.el is "function" then options.el() else "body"
+    @options.el = -> el
+    data = if typeof options.data is "function" then options.data() else options.data
+    @options.data = -> data
     @options.methods = _.clone @defaultMethods
     if @optionsOrigin.methods then (for k, v of @optionsOrigin.methods then @options.methods[k] = v)
   # 初期化時のattributes設定を行います
@@ -62,7 +63,7 @@ class ComponentBuilder
     @options
   defaultMethods:
     attr: -> @$options.attr
-    $main: -> $(@attr().el.main)
+    $main: -> $(@$el)
     $message: -> $(@attr().el.message, @$main())
     # 指定したdata要素キーに紐づくJQueryオブジェクトを返します
     # ※事前に対象コントロールに対し「.l-model-[dataKey]」が付与されている必要があります
@@ -277,7 +278,7 @@ class PanelListBuilder extends ComponentBuilder
     clear: ->
       @message()
       @clearMessage()
-      @items = []
+      @$set "items", []
     # 検索条件となるハッシュ情報を返します。
     searchData: -> {}
     # 検索時のURLパスを返します。ここで返すURLパスはapiUrlの引数に設定されます。
@@ -317,7 +318,7 @@ class PanelListBuilder extends ComponentBuilder
       if append
         _.each list, (item) =>
           @items.push item
-      else @items = list
+      else @$set "items", list
     # 検索後の後処理を行います。
     # 検索結果となる一覧変数(items)が設定されている保証があります。
     layoutSearch: ->
@@ -385,6 +386,7 @@ class PanelCrudBuilder extends ComponentBuilder
     data.item = data.item ? {}
     data.updateFlag = data.updateFlag ? false
     # 予約属性
+    @itemOrigin = _.clone(data.item)
     @options.data = -> data
   overrideMethods:
     $id: -> $(@attr().el.id, @$main())
@@ -441,7 +443,7 @@ class PanelCrudBuilder extends ComponentBuilder
     clear: ->
       @message()
       @clearMessage()
-      @item = {}
+      for k, v of @item then @$set "item.#{k}", null
     # 登録モードで自身を表示します
     showRegister: =>
       @hide()

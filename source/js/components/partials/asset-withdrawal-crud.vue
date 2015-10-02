@@ -18,9 +18,10 @@
 <script lang="coffee">
 Option = require "../../platform/vue-option.coffee"
 module.exports = new Option.PanelCrudBuilder(
+  el: ".l-withdrawal-crud"
   path: "/asset/cio/withdraw"
   attr: {el: {main: ".l-withdrawal-crud"}}
-  data: ->
+  data:
     item:
       absAmount: ""
   created: ->
