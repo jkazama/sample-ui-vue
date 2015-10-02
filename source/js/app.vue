@@ -40,11 +40,10 @@ module.exports = new Option.ComponentBuilder(
     @checkLogin => @logined = true
   methods:
     checkLogin: (success) ->
-      urlCheck = Param.Api.root + "/account/loginStatus"
       failure = (err) =>
         Lib.Log.debug 'ログイン情報を確認できませんでした'
         @$route.router.go("/timeout")
-      Lib.Ajax.get urlCheck, {}, success, failure
+      Lib.Ajax.get "#{Param.Api.root}/account/loginStatus", {}, success, failure
     logout: (e) ->
       e.preventDefault()
       @logined = false

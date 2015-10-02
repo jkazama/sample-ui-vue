@@ -40,6 +40,7 @@ class ComponentBuilder
     @options.attr = @options.attr ? {}
     @options.attr.el = @options.attr.el ? {}
     @options.attr.el.message = @options.attr.el.message ? ".l-message"
+    @options.attr.el.modelPrefix = @options.attr.el.modelPrefix ? ".l-model-"
     el = if typeof options.el is "function" then options.el() else "body"
     @options.el = -> el
     data = if typeof options.data is "function" then options.data() else options.data
@@ -71,7 +72,7 @@ class ComponentBuilder
     #   e.x. dataKey: hoge.hoga -> .l-model-hoge-hoga
     $obj: (key) ->
       key = key?.replace(/\./g, '-')
-      @$main().find(".l-model-" + key)
+      @$main().find(@attr().el.modelPrefix + key)
     # 初期化処理
     initialized: ->
       @clear()
@@ -371,7 +372,7 @@ class PanelCrudBuilder extends ComponentBuilder
     attr.popup = attr.popup ? false
     attr.spinner = attr.spinner ? true
     attr.flattenItem = attr.flattenItem ? false
-    attr.el.id = attr.el?.id ? ".l-model-id"
+    attr.el.id = attr.el?.id ? "id"
     attr.el.scrollBody = attr.el?.scrollBody ? ".panel-body"
   # 初期化時のmethods設定を行います
   bindMethods: ->
@@ -389,7 +390,7 @@ class PanelCrudBuilder extends ComponentBuilder
     @itemOrigin = _.clone(data.item)
     @options.data = -> data
   overrideMethods:
-    $id: -> $(@attr().el.id, @$main())
+    $id: -> $(@attr().el.modelPrefix + @attr().el.id, @$main())
     # 初期化後処理。Vue.jsのcreatedメソッドから呼び出す事で以下の処理が有効化されます。
     # ・ポップアップ指定に伴う自身の非表示制御
     initialized: ->
