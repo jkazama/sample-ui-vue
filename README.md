@@ -7,7 +7,7 @@ sample-ui-vue
 
 サンプル確認用のAPIサーバとして[sample-boot-hibernate](https://github.com/jkazama/sample-boot-hibernate)を期待します。
 
-> 現在作成中で、リファクタリングを継続しています。（jquery依存の軽減)
+`※ライブラリではなく上記ライブラリを用いた単純な実装サンプルです。`
 
 #### ビルド/テスト稼働環境構築
 
@@ -63,6 +63,4 @@ sample-ui-vue
 
 ### TODO
 
-- JQuery依存をできる限り減らす
-    - 減らせることができれば、、
 - ドキュメントリファクタ

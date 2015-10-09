@@ -16,7 +16,7 @@
 </template>
 
 <script lang="coffee">
-Option = require "../../platform/vue-option.coffee"
+Option = require "platform/vue-option"
 module.exports = new Option.PanelCrudBuilder(
   el: ".l-withdrawal-crud"
   path: "/asset/cio/withdraw"

@@ -43,11 +43,11 @@
 </template>
 
 <script lang="coffee">
-Option = require "../platform/vue-option.coffee"
+Option = require "platform/vue-option"
 module.exports = new Option.ComponentBuilder(
   components:
-    "asset-withdrawal-crud": require("./partials/asset-withdrawal-crud.vue")
-    "asset-withdrawal-list": require("./partials/asset-withdrawal-list.vue")
+    "asset-withdrawal-crud": require("components/partials/asset-withdrawal-crud")
+    "asset-withdrawal-list": require("components/partials/asset-withdrawal-list")
   ready: ->
     @$on 'action-success-crud', (v) => @$children[1].search()
 ).build()

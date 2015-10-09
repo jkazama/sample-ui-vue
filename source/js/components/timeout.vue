@@ -12,6 +12,6 @@
 </template>
 
 <script lang="coffee">
-Option = require "../platform/vue-option.coffee"
+Option = require "platform/vue-option"
 module.exports = new Option.ComponentBuilder({})
 </script>

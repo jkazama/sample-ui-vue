@@ -1,7 +1,7 @@
 ### Vue向け オプションビルダー ###
 
-Param = require "../variables.coffee"
-Lib = require "./plain.coffee"
+Param = require "variables"
+Lib = require "platform/plain"
 
 # Vue向けOptionビルダークラス
 # ファイルアップロードや確認ダイアログ/単純表示等、シンプルな処理が必要なときは

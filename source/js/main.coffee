@@ -1,14 +1,14 @@
 # JQuery dependency
-do require('./platform/jquery.coffee')
+do require('platform/jquery')
 
 # Vue Extension
-do require("./platform/vue-filter.coffee")
-do require("./platform/vue-directive.coffee")
+do require("platform/vue-filter")
+do require("platform/vue-directive")
 
 # Vue Routing
 router = new VueRouter()
-router.map require("./routes.coffee")
+router.map require("routes")
 
 # App
-App = Vue.extend(require("./app.vue"))
+App = Vue.extend(require("app"))
 router.start App, "#app"

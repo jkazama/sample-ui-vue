@@ -3,8 +3,8 @@
 # JS全般で利用されるグローバル処理定義
 #----------------------------------
 
-Constants = require "../constants.coffee"
-Param     = require "../variables.coffee"
+Constants = require "constants"
+Param     = require "variables"
 
 ## ログユーティリティ
 # variables.coffeeでログ出力レベルを変更させる事が可能です。

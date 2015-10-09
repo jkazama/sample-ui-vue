@@ -14,8 +14,8 @@
       .alert.alert-warning サーバ側（サンプル実装版）の認証モードを有効にした時は sample/sample でログインしてください。
 </template>
 <script lang="coffee">
-Lib = require "../platform/plain.coffee"
-Option = require "../platform/vue-option.coffee"
+Lib = require "platform/plain"
+Option = require "platform/vue-option"
 module.exports = new Option.ComponentBuilder(
   el: ".l-panel-login"
   data:

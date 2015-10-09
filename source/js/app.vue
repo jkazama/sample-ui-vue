@@ -28,9 +28,9 @@
 </template>
 
 <script lang="coffee">
-Param = require "./variables.coffee"
-Lib = require "./platform/plain.coffee"
-Option = require "./platform/vue-option.coffee"
+Param = require "variables"
+Lib = require "platform/plain"
+Option = require "platform/vue-option"
 # ヘッダパネル
 module.exports = new Option.ComponentBuilder(
   data:
