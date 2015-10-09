@@ -18,7 +18,7 @@
 </template>
 
 <script lang="coffee">
-Option = require "../../platform/vue-option.coffee"
+Option = require "platform/vue-option"
 module.exports = new Option.PanelListBuilder(
   el: ".l-withdrawal-list"
   path: "/asset/cio/unprocessedOut/"

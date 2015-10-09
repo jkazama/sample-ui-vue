@@ -28,9 +28,9 @@
 </template>
 
 <script lang="coffee">
-Param = require "./variables.coffee"
-Lib = require "./platform/plain.coffee"
-Option = require "./platform/vue-option.coffee"
+Param = require "variables"
+Lib = require "platform/plain"
+Option = require "platform/vue-option"
 # ヘッダパネル
 module.exports = new Option.ComponentBuilder(
   data:
@@ -40,11 +40,10 @@ module.exports = new Option.ComponentBuilder(
     @checkLogin => @logined = true
   methods:
     checkLogin: (success) ->
-      urlCheck = Param.Api.root + "/account/loginStatus"
       failure = (err) =>
         Lib.Log.debug 'ログイン情報を確認できませんでした'
         @$route.router.go("/timeout")
-      Lib.Ajax.get urlCheck, {}, success, failure
+      Lib.Ajax.get "#{Param.Api.root}/account/loginStatus", {}, success, failure
     logout: (e) ->
       e.preventDefault()
       @logined = false

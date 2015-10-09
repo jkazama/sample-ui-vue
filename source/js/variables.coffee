@@ -3,7 +3,7 @@
 # JS全般で利用されるグローバル変数定義
 #----------------------------------
 
-Constants = require "./constants.coffee"
+Constants = require "constants"
 
 module.exports =
   #### Param [System]

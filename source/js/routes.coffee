@@ -1,7 +1,7 @@
 module.exports =
-  "/login":   {component: require("./components/login.vue")}
-  "/timeout": {component: require("./components/timeout.vue")}
-  "/":        {component: require("./components/asset.vue")}
-  "/top":     {component: require("./components/top.vue")}
-  "/trade":   {component: require("./components/trade.vue")}
-  "/asset":   {component: require("./components/asset.vue")}
+  "/login":   {component: require("components/login")}
+  "/timeout": {component: require("components/timeout")}
+  "/":        {component: require("components/asset")}
+  "/top":     {component: require("components/top")}
+  "/trade":   {component: require("components/trade")}
+  "/asset":   {component: require("components/asset")}
