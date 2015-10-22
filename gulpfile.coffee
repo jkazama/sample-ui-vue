@@ -1,7 +1,7 @@
 root = 
   src:         "#{__dirname}/source"
   dist:        "#{__dirname}/public"
-  # dist:      "#{__dirname}/src/main/resources/static"
+  # dist:      "../src/main/resources/static"
 paths =
   src:
     root:      "#{root.src}"
@@ -21,7 +21,7 @@ resource =
   src:
     jade:      "#{paths.src.html}/**/*.jade"
     webpack:
-      coffee:  "#{paths.src.js}/**/*.coffee"
+      babel:   "#{paths.src.js}/**/*.js"
       vue:     "#{paths.src.js}/**/*.vue"
     sass:      "#{paths.src.css}/**/*.s+(a|c)ss"
     static:    "#{paths.src.static}/**/*"
@@ -75,7 +75,7 @@ gulp.task "bower", ->
       .pipe($.if(production, $.uglify()))
       .pipe(gulp.dest(paths.dist.js))
 
-# compile Webpack [ Coffee / Vue -> SPA(main.js) ]
+# compile Webpack [ ES6(Babel) / Vue -> SPA(main.js) ]
 gulp.task "build:webpack", ->
   process.env.NODE_ENV = if production is true then "production" else "development"
   plugins =
@@ -90,19 +90,19 @@ gulp.task "build:webpack", ->
         new webpack.ResolverPlugin(new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("bower.json", ["main"]))
         new webpack.optimize.DedupePlugin()
       ]
-  gulp.src([resource.src.webpack.coffee, resource.src.webpack.vue])
+  gulp.src([resource.src.webpack.babel, resource.src.webpack.vue])
     .pipe(webpackStream({
-      entry: "#{paths.src.js}/main.coffee"
-      output: {filename: "main.js"}
+      entry: "#{paths.src.js}/main.js"
+      output: {filename: "bundler.js"}
       watch: !production
       module:
         loaders: [
-          {test: /\.coffee$/, loader: "coffee"}
+          {test: /\.js$/, loader: "babel?blacklist[]=regenerator"}
           {test: /\.vue$/, loader: vue.withLoaders({sass: "style!css!sass?indentedSyntax"})}
         ]
       resolve:
         modulesDirectories: ["node_modules", "bower_components", paths.src.js]
-        extensions: ["", ".js", ".coffee", ".vue"]
+        extensions: ["", ".js", ".vue"]
       plugins: plugins
      }, webpack))
     .pipe(gulp.dest(paths.dist.js))
