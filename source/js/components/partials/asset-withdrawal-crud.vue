@@ -15,21 +15,26 @@
       .alert.alert-warning 出金依頼に関わる注記文言を記載。動作確認用サンプルなので導線なり重複依頼はルーズに。
 </template>
 
-<script lang="coffee">
-Option = require "platform/vue-option"
-module.exports = new Option.PanelCrudBuilder(
-  el: ".l-withdrawal-crud"
-  path: "/asset/cio/withdraw"
-  attr: {el: {main: ".l-withdrawal-crud"}}
-  data:
-    item:
+<script lang="babel">
+import * as Option from "platform/vue-option"
+export default new Option.PanelCrudBuilder({
+  el: ".l-withdrawal-crud",
+  path: "/asset/cio/withdraw",
+  data: {
+    item: {
       absAmount: ""
-  created: ->
-    @initialized()
-  methods:
-    actionSuccessMessage: -> "依頼を受け付けました"
-    registerData: ->
-      @item.currency = "JPY"
-      @item
-).build()
+    }
+  },
+  created: function() {
+    this.initialized()
+  },
+  methods: {
+    actionSuccessMessage: function() { return "依頼を受け付けました" },
+    registerData: function() {
+      this.item.currency = "JPY"
+      console.log('ok')
+      return this.item
+    }
+  }
+}).build()
 </script>

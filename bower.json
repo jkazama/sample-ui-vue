@@ -1,6 +1,6 @@
 {
-  "name": "My Application",
-  "version": "0.2.2",
+  "name": "sample-ui-vue",
+  "version": "0.3.0",
   "private": true,
   "main": "main.js",
   "dependencies": {

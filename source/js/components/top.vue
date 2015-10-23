@@ -5,4 +5,4 @@
   .alert.alert-warning.l-center 取り扱い商品名（TOP）作成中
 </template>
 
-<script lang="coffee"></script>
+<script lang="babel"></script>

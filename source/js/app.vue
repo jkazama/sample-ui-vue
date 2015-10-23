@@ -27,29 +27,35 @@
   router-view
 </template>
 
-<script lang="coffee">
-Param = require "variables"
-Lib = require "platform/plain"
-Option = require "platform/vue-option"
-# ヘッダパネル
-module.exports = new Option.ComponentBuilder(
-  data:
+<script lang="babel">
+import Param from 'variables'
+import * as Lib from 'platform/plain'
+import * as Option from "platform/vue-option"
+// ヘッダパネル
+export default new Option.ComponentBuilder({
+  data: {
     logined: false
-  created: ->
-    @initialized()
-    @checkLogin => @logined = true
-  methods:
-    checkLogin: (success) ->
-      failure = (err) =>
-        Lib.Log.debug 'ログイン情報を確認できませんでした'
-        @$route.router.go("/timeout")
-      Lib.Ajax.get "#{Param.Api.root}/account/loginStatus", {}, success, failure
-    logout: (e) ->
+  },
+  created: function() {
+    this.initialized()
+    this.checkLogin(() => this.logined = true)
+  },
+  methods: {
+    checkLogin: function(success) {
+      let failure = (err) => {
+        Lib.Log.debug('ログイン情報を確認できませんでした')
+        this.$route.router.go("/timeout")
+      }
+      Lib.Ajax.get(`${Param.Api.root}/account/loginStatus`, {}, success, failure)
+    },
+    logout: function(e) {
       e.preventDefault()
-      @logined = false
-      @logoutSession()
-      @apiPost '/logout', {}, ((v) -> true), ((e)-> false)
-      Lib.Log.debug 'ログアウトしました'
-      @$route.router.go("/login")
-).build()
+      this.logined = false
+      this.logoutSession()
+      this.apiPost('/logout', {}, ((v) => true), ((e)=> false))
+      Lib.Log.debug('ログアウトしました')
+      this.$route.router.go("/login")
+    }
+  }
+}).build()
 </script>

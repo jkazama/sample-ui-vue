@@ -1,3 +1,5 @@
+<style lang="sass"></style>
+
 <template lang="jade">
   .container
     .col-xs-6.col-xs-offset-3
@@ -13,31 +15,41 @@
             | 　ログイン
       .alert.alert-warning サーバ側（サンプル実装版）の認証モードを有効にした時は sample/sample でログインしてください。
 </template>
-<script lang="coffee">
-Lib = require "platform/plain"
-Option = require "platform/vue-option"
-module.exports = new Option.ComponentBuilder(
-  el: ".l-panel-login"
-  data:
-    loginId: ""
+
+<script lang="babel">
+import * as Lib from "platform/plain"
+import * as Option from "platform/vue-option"
+export default new Option.ComponentBuilder({
+  el: ".l-panel-login",
+  data: {
+    loginId: "",
     password: ""
-  methods:
-    login: ->
-      Lib.Log.debug @loginId
-      success = (ret) =>
-        Lib.Log.debug "ログインに成功しました - "
-        @forward()
-      failure = (error) =>
-        @clearMessage()
-        switch error.status
-          when 400
-            @message "IDまたはパスワードに誤りがあります"
-          else
-            @message "要求処理に失敗しました", "danger"
-      @apiPost "/login", {loginId: @loginId, password: @password}, success, failure
-    forward: ->
-      @apiGet "/account/loginAccount", {}, (v) =>
-        @loginSession(v)
+  },
+  methods: {
+    login: function() {
+      Lib.Log.debug(this.loginId)
+      let success = (ret) => {
+        Lib.Log.debug("ログインに成功しました - ")
+        this.forward()
+      }
+      let failure = (error) => {
+        this.clearMessage()
+        switch (error.status) {
+          case 400:
+            this.message("IDまたはパスワードに誤りがあります")
+            break
+          default:
+            this.message("要求処理に失敗しました", "danger")
+        }
+      }
+      this.apiPost("/login", {loginId: this.loginId, password: this.password}, success, failure)
+    },
+    forward: function() {
+      this.apiGet("/account/loginAccount", {}, (v) => {
+        this.loginSession(v)
         location.href = "index.html"
-).build()
+      })
+    }
+  }
+}).build()
 </script>
