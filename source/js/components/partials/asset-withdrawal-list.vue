@@ -14,15 +14,14 @@
             .l-item.l-item-type
               .label.label-default(v-text="item.statusType")
             .l-item.l-item-currency.pull-right(v-text="item.currency")
-            .l-item.l-item-amount.pull-right(v-text="item.absAmount | currencyYen")
+            .l-item.l-item-amount.pull-right(v-text="item.absAmount | amount")
 </template>
 
-<script lang="coffee">
-Option = require "platform/vue-option"
-module.exports = new Option.PanelListBuilder(
-  el: ".l-withdrawal-list"
-  path: "/asset/cio/unprocessedOut/"
-  attr: {el: {main: ".l-withdrawal-list"}}
-  created: -> @initialized()
-).build()
+<script lang="babel">
+import * as Option from "platform/vue-option"
+export default new Option.PanelListBuilder({
+  el: ".l-withdrawal-list",
+  path: "/asset/cio/unprocessedOut/",
+  created: function() { this.initialized() }
+}).build()
 </script>

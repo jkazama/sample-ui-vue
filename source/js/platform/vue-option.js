@@ -8,6 +8,7 @@ import * as Lib from "platform/plain"
 # ファイルアップロードや確認ダイアログ/単純表示等、シンプルな処理が必要なときは
 # 本インスタンスのbuild実行戻り値(optionハッシュ)を元にVue.jsオブジェクトを作成してください。
 # 作成方式は通常のVue.jsと同様です。(new Vue / Vue.extend / Vue.component)
+# メソッド定義は「function」を明記する記法で行ってください。(メソッド内部では「() =>」を用いた記法も利用可)
 # 本クラスを利用する際は初期化時に以下の設定が必要です。
 # ・createdメソッド内でinitializedを呼び出す
 # ---
@@ -74,9 +75,9 @@ export class ComponentBuilder {
     // ※事前に対象コントロールに対し「.l-model-[dataKey]」が付与されている必要があります
     //   ネストオブジェクト対応としてkeyに「.」が含まれていた時は「-」である事を期待します。
     //   e.x. dataKey: hoge.hoga -> .l-model-hoge-hoga
-    $obj: (key) => {
-      key = key ? key.replace(/\./g, '-') : ""
-      return this.$main().find(this.attr().el.modelPrefix + key)
+    $obj: function(key) {
+      let k = key ? key.replace(/\./g, '-') : ""
+      return this.$main().find(this.attr().el.modelPrefix + k)
     },
     // 初期化処理
     initialized: function() {
@@ -238,6 +239,7 @@ export class ComponentBuilder {
 # 検索を前提としたVueOptionビルダークラス
 # 一覧パネル等で利用してください。ページング検索(自動ロード方式)もサポートしています。
 # (API側でPagingListを返す必要があります)
+# メソッド定義は「function」を明記する記法で行ってください。(メソッド内部では「() =>」を用いた記法も利用可)
 # 本クラスを利用する際は初期化時に以下の設定が必要です。
 # ・path属性の定義
 # ・createdメソッド内でinitializedを呼び出す
@@ -264,7 +266,7 @@ export class ComponentBuilder {
 export class PanelListBuilder extends ComponentBuilder {
   constructor(options) {
     super(options)
-    this.loadOverrideMethods = this.overrideMethods()
+    this.overrideMethods = this.loadOverrideMethods()
   }
   // 初期化時のattributes設定を行います
   bindOptions() {
@@ -279,7 +281,9 @@ export class PanelListBuilder extends ComponentBuilder {
   bindMethods() {
     let m = this.options.methods
     Object.keys(this.overrideMethods).forEach((k) => m[k] = this.overrideMethods[k])
-    Object.keys(this.optionsOrigin).forEach((k) => m[k] = this.optionsOrigin[k])
+    if (this.optionsOrigin.methods) {
+      Object.keys(this.optionsOrigin.methods).forEach((k) => m[k] = this.optionsOrigin.methods[k])
+    }
   }
   // 初期化処理を行います
   setup() {
@@ -291,56 +295,56 @@ export class PanelListBuilder extends ComponentBuilder {
     // 予約属性
     this.options.data = () => data
   }
-  overrideMethods() { return {
-    $body: () => { return $(this.attr().el.listBody, this.$main()) },
-    $waitRow: () => { return $(this.attr().el.listWaitRow, this.$body()) },
-    $count: () => { return $(this.attr().el.listCount, this.$main()) },
+  loadOverrideMethods() { return {
+    $body: function() { return $(this.attr().el.listBody, this.$main()) },
+    $waitRow: function() { return $(this.attr().el.listWaitRow, this.$body()) },
+    $count: function() { return $(this.attr().el.listCount, this.$main()) },
     // 初期化後処理。Vue.jsのcreatedメソッドから呼び出す事で以下の処理が有効化されます。
     // ・page情報を監視して検索結果の件数を表示する
     // ・listBody要素のbottomイベントに自動ページング処理を紐付け
     // ・初期検索を実行
-    initialized: () => {
+    initialized: function() {
       this.$waitRow().hide()
       // イベント登録
       if (this.attr().paging) {
         this.$watch('page', (page) => this.$count().text(page.total ? page.total : '-1'))
         this.$panels.body.onBottom(() => this.next())
       } else {
-        this.$watch('items', (items) => this.$count().text(items.length))
+        this.$watch('items', (items) => this.$count().text(this.items.length))
       }
       // 初期化
       if (this.attr().initialSearch) this.search()
     },
-    show: (speed = 100) => {
+    show: function(speed = 100) {
       this.initSearch()
       this.$main().show(speed)
     },
     // 検索パネルを表示する際の初期化処理
-    initSearch: () => { /* 必要に応じて同名のメソッドで拡張実装してください */ },
+    initSearch: function() { /* 必要に応じて同名のメソッドで拡張実装してください */ },
     // 検索処理を行います
     // 検索時の接続URLはsearchPath、検索条件はsearchDataに依存します。
     // 検索成功時の後処理はlayoutSearchを実装する事で差し込み可能です。
-    search: () => { this.renderSearch() },
+    search: function() { this.renderSearch() },
     // 次ページの検索を行います。
     // 検索結果は一覧にそのまま追加されます。
     // ※タイミングによっては重複レコードが発生しますが、現時点ではそれらを取り除く処理は実装していません。
-    next: () => {
+    next: function() {
       this.page.page = this.page.page + 1
       Lib.Log.debug(`- search next to ${this.page.page}`)
       this.renderSearch(true)
     },
     // 各種メッセージの他、検索結果を初期化します
-    clear: () => {
+    clear: function() {
       this.message()
       this.clearMessage()
       this.$set('items', [])
     },
     // 検索条件となるハッシュ情報を返します。
-    searchData: () => { /* 利用先で設定してください */ return {} },
+    searchData: function() { /* 利用先で設定してください */ return {} },
     // 検索時のURLパスを返します。ここで返すURLパスはapiUrlの引数に設定されます。
-    searchPath: () => { return this.$options.path },
+    searchPath: function() { return this.$options.path },
     // 検索を行います。appendがfalseのときは常に一覧を初期化します。
-    renderSearch: (append = false) => {
+    renderSearch: function(append = false) {
       Lib.Log.debug(`- search url: ${this.apiUrl(this.searchPath())}`)
       let param = this.searchData()
       if (0 < Object.keys(param).length) Lib.Log.debug(param)
@@ -352,12 +356,12 @@ export class PanelListBuilder extends ComponentBuilder {
         if (this.page) this.page.page = 1
       }
       if (this.$waitRow().size()) this.$waitRow().show()
-      success = (data) => {
+      let success = (data) => {
         this.$waitRow().hide()
         this.renderList(data, append)
         this.layoutSearch()
       }
-      failure = (error) => {
+      let failure = (error) => {
         this.$waitRow().hide()
         this.apiFailure(error)
       }
@@ -365,10 +369,10 @@ export class PanelListBuilder extends ComponentBuilder {
     },
     // 検索結果をitemsへ格納します。
     // itemsがv-repeat等で画面要素と紐づいていた時は画面側にも内容が反映されます。
-    renderList: (data, append) => {
+    renderList: function(data, append) {
       Lib.Log.debug('- search result -')
       Lib.Log.debug(data)
-      list = () => {
+      let list = () => {
         if (this.attr().paging) {
           if (data.page) {
             this.page = data.page
@@ -387,13 +391,14 @@ export class PanelListBuilder extends ComponentBuilder {
     },
     // 検索後の後処理を行います。
     // 検索結果となる一覧変数(items)が設定されている保証があります。
-    layoutSearch: () => { /* 必要に応じて同名のメソッドで拡張実装してください */ }
+    layoutSearch: function() { /* 必要に応じて同名のメソッドで拡張実装してください */ }
   }}
 }
 
 /**
 # 特定情報の登録/変更/削除を前提としたOptionビルダークラス
 # 情報に対するCRUD目的のパネルで利用してください。
+# メソッド定義は「function」を明記する記法で行ってください。(メソッド内部では「() =>」を用いた記法も利用可)
 # 本クラスを利用する際は初期化時に以下の設定が必要です。
 # ・path属性の定義
 # ・createdメソッド内でinitializedを呼び出す
@@ -435,7 +440,7 @@ export class PanelListBuilder extends ComponentBuilder {
 export class PanelCrudBuilder extends ComponentBuilder {
   constructor(options) {
     super(options)
-    this.loadOverrideMethods = this.overrideMethods()
+    this.overrideMethods = this.loadOverrideMethods()
   }
   // 初期化時のattributes設定を行います
   bindOptions() {
@@ -450,7 +455,9 @@ export class PanelCrudBuilder extends ComponentBuilder {
   bindMethods() {
     let m = this.options.methods
     Object.keys(this.overrideMethods).forEach((k) => m[k] = this.overrideMethods[k])
-    Object.keys(this.optionsOrigin).forEach((k) => m[k] = this.optionsOrigin[k])
+    if (this.optionsOrigin.methods) {
+      Object.keys(this.optionsOrigin.methods).forEach((k) => m[k] = this.optionsOrigin.methods[k])
+    }
   }
   // 初期化処理を行います
   setup() {
@@ -463,28 +470,28 @@ export class PanelCrudBuilder extends ComponentBuilder {
     this.itemOrigin = _.clone(data.item)
     this.options.data = () => data
   }
-  overrideMethods() { return {
-    $id: () => { return $(this.attr().el.modelPrefix + this.attr().el.id, this.$main()) },
+  loadOverrideMethods() { return {
+    $id: function() { return $(this.attr().el.modelPrefix + this.attr().el.id, this.$main()) },
     // 初期化後処理。Vue.jsのcreatedメソッドから呼び出す事で以下の処理が有効化されます。
     // ・ポップアップ指定に伴う自身の非表示制御
-    initialized: () => {
+    initialized: function() {
       if (this.attr().popup) this.hide()
     },
     // 登録/変更処理を行います。
     // 実行時の接続URLは前述のattributes解説を参照。実際の呼び出しはregisterPath/updatePathの値を利用。
     // 登録情報はregisterDataに依存します。
     // 登録成功時の後処理はactionSuccessAfter、失敗時の後処理はactionFailureAfterを実装する事で差し込み可能です。
-    register: (event) => {
+    register: function(event) {
       let $btn = this.startAction(event)
       let path = this.updateFlag ? this.updatePath() : this.registerPath()
       Lib.Log.debug(`- register url: ${this.apiUrl(path)}`)
       let param = this.registerData()
       if (0 < Object.keys(param).length) Lib.Log.debug(param)
-      success = (v) => {
+      let success = (v) => {
         this.actionSuccess(v)
         this.endAction($btn)
       }
-      failure = (error) => {
+      let failure = (error) => {
         this.actionFailure(error)
         this.endAction($btn)
       }
@@ -492,7 +499,7 @@ export class PanelCrudBuilder extends ComponentBuilder {
     },
     // イベント開始処理を行います。
     // 具体的にはイベントオブジェクト(ボタンを想定)をdisableにして末尾に処理中のspinnerを表示します。
-    startAction: (event, el = null) => {
+    startAction: function(event, el = null) {
       if (!event || !this.attr().spinner) return null
       let $btn = $(el ? el : event.target)
       $btn.disable()
@@ -500,7 +507,7 @@ export class PanelCrudBuilder extends ComponentBuilder {
       return $btn
     },
     // イベント終了処理を行います。startActionの戻り値を引数に設定してください
-    endAction: ($btn) => {
+    endAction: function($btn) {
       if (!$btn || !this.attr().spinner) return
       $('.l-spin-crud', $btn).remove()
       $btn.enable()
@@ -508,28 +515,28 @@ export class PanelCrudBuilder extends ComponentBuilder {
     // 削除処理を行います。
     // 削除時の接続URLは前述のattributes解説を参照。実際の呼び出しはdeletePathの値を利用。
     // 削除成功時の後処理はactionSuccessAfter、失敗時の後処理はactionFailureAfterを実装する事で差し込み可能です。
-    delete: (event) => {
+    delete: function(event) {
       let $btn = this.startAction(event)
       let path = this.deletePath()
       Lib.Log.debug(`- delete url: ${this.apiUrl(path)}`)
-      success = (v) => {
+      let success = (v) => {
         this.actionSuccess(v)
         this.endAction($btn)
       }
-      failure = (error) => {
+      let failure = (error) => {
         this.actionFailure(error)
         this.endAction($btn)
       }
       this.apiPost(path, {}, success, failure)
     },
     // 各種メッセージの他、登録情報を初期化します
-    clear: () => {
+    clear: function() {
       this.message()
       this.clearMessage()
       Object.keys(this.item).forEach((k) => this.$set(`item.${k}`, null))
     },
     // 登録モードで自身を表示します
-    showRegister: () => {
+    showRegister: function() {
       this.hide()
       this.updateFlag = false
       this.clear()
@@ -539,9 +546,9 @@ export class PanelCrudBuilder extends ComponentBuilder {
       Lib.Log.debug(`show register [${this.$el ? this.$el.className : 'unknown'}]`)
     },
     // 登録モードで表示する際の初期化処理を行います
-    initRegister: () => { /* 必要に応じて同名のメソッドで拡張実装してください */ },
+    initRegister: function() { /* 必要に応じて同名のメソッドで拡張実装してください */ },
     // 変更モードで自身を表示します
-    showUpdate: (item) => {
+    showUpdate: function(item) {
       this.hide()
       this.updateFlag = true
       this.clear()
@@ -556,22 +563,22 @@ export class PanelCrudBuilder extends ComponentBuilder {
     // 変更モードで表示する際の初期化処理を行います(this.item未設定)
     // itemバインドがまだされていない点に注意してください。itemバインド後の処理が必要な時は
     // layoutUpdateを実装してください。
-    initUpdate: (item) => { /* 必要に応じて同名のメソッドで拡張実装してください */ },
+    initUpdate: function(item) { /* 必要に応じて同名のメソッドで拡張実装してください */ },
     // 変更モードで表示する際のレイアウト処理を行います(this.item設定済)
-    layoutUpdate: (item) => { /* 必要に応じて同名のメソッドで拡張実装してください */ },
+    layoutUpdate: function(item) { /* 必要に応じて同名のメソッドで拡張実装してください */ },
     // 登録時のURLパスを返します。ここで返すURLパスはapiUrlの引数に設定されます。
-    registerPath: (item) => { return this.$options.path },
+    registerPath: function(item) { return this.$options.path },
     // 更新時のURLパスを返します。ここで返すURLパスはapiUrlの引数に設定されます。
-    updatePath: () => { return `${this.registerPath()}${this.idPath()}/` },
+    updatePath: function() { return `${this.registerPath()}${this.idPath()}/` },
     // 削除時のURLパスを返します。ここで返すURLパスはapiUrlの引数に設定されます。
-    deletePath: () => { return `${this.registerPath()}${this.idPath()}/delete` },
+    deletePath: function() { return `${this.registerPath()}${this.idPath()}/delete` },
     // 更新/削除時に利用されるID情報を返します。
     // $idが定義されている時はその値、未定義の時はitem.idを利用します。
     // 各利用先で上書き定義する事も可能です。
-    idPath: () => { return 0 < this.$id().size() ? this.$id().val() : this.item.id },
+    idPath: function() { return 0 < this.$id().size() ? this.$id().val() : this.item.id },
     // 登録/変更情報をハッシュで返します。
     // 標準ではitemの値をコピーして返します。
-    registerData: () => {
+    registerData: function() {
       let data = _.clone(this.item)
       Object.keys(data).forEach((k) => {
         if (typeof data[k] === 'object') data[k] = null
@@ -579,7 +586,7 @@ export class PanelCrudBuilder extends ComponentBuilder {
       return data
     },
     // 登録/変更/削除時の成功処理を行います。
-    actionSuccess: (v) => {
+    actionSuccess: function(v) {
       this.$dispatch('action-success-crud', v)
       if (this.attr().popup) {
         this.clear()
@@ -593,11 +600,11 @@ export class PanelCrudBuilder extends ComponentBuilder {
       this.actionSuccessAfter(v)
     },
     // 登録/変更/削除時の表示文言を返します。
-    actionSuccessMessage: () => { return this.updateFlag ? '変更(削除)を完了しました' : '登録を完了しました' },
+    actionSuccessMessage: function() { return this.updateFlag ? '変更(削除)を完了しました' : '登録を完了しました' },
     // 登録/変更/削除時の成功後処理を行います。
-    actionSuccessAfter: (v) => { /* 必要に応じて同名のメソッドで拡張実装してください */ },
+    actionSuccessAfter: function(v) { /* 必要に応じて同名のメソッドで拡張実装してください */ },
     // 登録/変更/削除時の失敗処理を行います。
-    actionFailure: (xhr) => {
+    actionFailure: function(xhr) {
       this.apiFailure(xhr)
       var gwarn = null
       var cwarns = {}
@@ -621,9 +628,9 @@ export class PanelCrudBuilder extends ComponentBuilder {
       this.actionFailureAfter(xhr, gwarn, cwarns)
     },
     // 登録/変更/削除時の失敗後処理を行います。
-    actionFailureAfter: (xhr, gwarn, cwarns) => { /* 必要に応じて同名のメソッドで拡張実装してください */ },
+    actionFailureAfter: function(xhr, gwarn, cwarns) { /* 必要に応じて同名のメソッドで拡張実装してください */ },
     // 指定したbodyEl内の要素キーで例外を持つ最上位のコントロールへスクロール移動します。
-    scrollToColumn: (bodyEl, cwarns) => {
+    scrollToColumn: function(bodyEl, cwarns) {
       let keys = Object.keys(cwarns)
       if (0 < keys.length) {
         let $body = $(bodyEl, this.$main())

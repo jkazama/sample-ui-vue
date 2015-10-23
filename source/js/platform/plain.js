@@ -49,7 +49,7 @@ export class Ajax {
   // GET形式でサーバ側へリクエスト処理をします。
   static get(url, data = {}, success = this.handleSuccess, failure = this.handleFailure) {
     this.promiseGet(url, data).then((res) => {
-      if (success) success(res.body)
+      if (success) success(res)
     }).catch((xhr) => {
       this.handlePreFailure(xhr)
       if (failure) failure(xhr)
@@ -66,7 +66,7 @@ export class Ajax {
   // POST形式でサーバ側へリクエスト処理をします。
   static post(url, data = {}, success = this.handleSuccess, failure = this.handleFailure) {
     this.promisePost(url, data).then((res) => {
-      if (success) success(res.body)
+      if (success) success(res)
     }).catch((xhr) => {
       this.handlePreFailure(xhr)
       if (failure) failure(xhr)
@@ -89,7 +89,7 @@ export class Ajax {
   // 指定されたハッシュデータはFormDataへ紐付けられて送信されます。
   static upload(url, data = {}, success = this.handleSuccess, failure = this.handleFailure) {
     this.promiseUpload(url, data).then((res) => {
-      if (success) success(res.body)
+      if (success) success(res)
     }).catch((xhr) => {
       this.handlePreFailure(xhr)
       if (failure) failure(xhr)

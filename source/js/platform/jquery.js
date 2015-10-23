@@ -4,14 +4,14 @@
 ----------------------------------*/
 export default function() {
   // 対象となるコントロールを無効化します
-  $.fn.enable = () => this.attr("disabled", false)
+  $.fn.enable = function() { this.attr("disabled", false) }
 
   // 対象となるコントロールを有効化します
-  $.fn.disable = () => this.attr("disabled", true)
+  $.fn.disable = function() { this.attr("disabled", true) }
 
   // jquery.bottom
   // スクロール末端に到達したイベント[bottom]を追加しています。
-  $.fn.bottom = (options) => {
+  $.fn.bottom = function(options) {
     defaults = { proximity: 0 }
     options = $.extend(defaults, options)
     this.each(function(obj) {
@@ -31,13 +31,13 @@ export default function() {
   }
 
   // スクロール末端に到達したイベント[bottom]の受信処理
-  $.fn.onBottom = (fn) => {
+  $.fn.onBottom = function(fn) {
     thisbottom({ proximity: 0.05 })
     this.on("bottom", fn)
   }
 
   // 指定した正規表現の要素クラスを削除
-  $.fn.removeClassRegex = (regex) => {
+  $.fn.removeClassRegex = function(regex) {
     this.removeClass((index, css) => (css.match(regex) || []).join(' '))
   }
 }

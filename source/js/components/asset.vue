@@ -1,13 +1,15 @@
 <style lang="sass">
-.tab-pane
-  padding: 10px 0
-
-.l-list-body
-  height: 210px
-
-.l-panel-asset-info
-  .panel-body
-    height: 300px
+.tab-pane {
+  padding: 10px 0;
+}
+.l-list-body {
+  height: 210px;
+}
+.l-panel-asset-info {
+  .panel-body {
+    height: 300px;
+  }
+}
 </style>
 
 <template lang="jade">
@@ -43,12 +45,16 @@
 </template>
 
 <script lang="babel">
-// Option = require "platform/vue-option"
-// module.exports = new Option.ComponentBuilder(
-//   components:
-//     "asset-withdrawal-crud": require("components/partials/asset-withdrawal-crud")
-//     "asset-withdrawal-list": require("components/partials/asset-withdrawal-list")
-//   ready: ->
-//     @$on 'action-success-crud', (v) => @$children[1].search()
-// ).build()
+import * as Option from "platform/vue-option"
+import withdrawalCrud from "components/partials/asset-withdrawal-crud"
+import withdrawalList from "components/partials/asset-withdrawal-list"
+export default new Option.ComponentBuilder({
+  components: {
+    "asset-withdrawal-crud": withdrawalCrud,
+    "asset-withdrawal-list": withdrawalList
+  },
+  ready: function() {
+    this.$on('action-success-crud', (v) => this.$children[1].search())
+  }
+}).build()
 </script>

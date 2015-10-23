@@ -36,7 +36,6 @@ bower         = require "bower"
 bowerFiles    = require "main-bower-files"
 webpack       = require 'webpack'
 webpackStream = require "webpack-stream"
-vue           = require 'vue-loader'
 browserSync   = require("browser-sync").create()
 
 production = false
@@ -98,7 +97,7 @@ gulp.task "build:webpack", ->
       module:
         loaders: [
           {test: /\.js$/, loader: "babel?blacklist[]=regenerator"}
-          {test: /\.vue$/, loader: vue.withLoaders({sass: "style!css!sass?indentedSyntax"})}
+          {test: /\.vue$/, loader: "vue"}
         ]
       resolve:
         modulesDirectories: ["node_modules", "bower_components", paths.src.js]

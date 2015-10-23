@@ -32,7 +32,7 @@ import Param from 'variables'
 import * as Lib from 'platform/plain'
 import * as Option from "platform/vue-option"
 // ヘッダパネル
-let option = new Option.ComponentBuilder({
+export default new Option.ComponentBuilder({
   data: {
     logined: false
   },
@@ -58,5 +58,4 @@ let option = new Option.ComponentBuilder({
     }
   }
 }).build()
-export default option
 </script>

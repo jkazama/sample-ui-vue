@@ -38,16 +38,14 @@ sample-ui-vue
 
 ### 開発の流れ
 
-基本的にAltリソース(.jade/.sass/.coffee[.vue])をWebリソース(.html/.css/.js)へGulpでリアルタイム変換させながら開発をしていきます。
+基本的にAltリソース(.jade/.scss/.js(ES6)[.vue])をWebリソース(.html/.css/.js)へGulpでリアルタイム変換させながら開発をしていきます。
 動作確認はGulpで独自にWebサーバを立ち上げた後、ブラウザ上で行います。  
 
 #### Altリソースの解説
 
 - [Jade](http://jade-lang.com/)
-- [Sass](http://sass-lang.com/)
-- [CoffeeScript](http://coffeescript.org/)
-
-*※「Sass SCSS」でなく「Sass」を利用しているのは単純にインデント + 閉じ無しで統一したかったためです。*
+- [Sass (SCSS)](http://sass-lang.com/)
+- [ES6 with Babel](https://babeljs.io/)
 
 #### Altリソースの変更監視 / Webサーバ起動
 
@@ -60,7 +58,12 @@ sample-ui-vue
 - プロジェクト固有のJSはWebpackを利用して生成する
     - グローバルスコープの汚染を許容せずにモジュールベースで開発する
     - 外部ライブラリのアクセスは従来通りグローバルな名前空間を用いる
+- [React.js版](https://github.com/jkazama/sample-ui-react)と異なり、DOM表示後の操作を中心とした従来型の実装方式
+    - コンポーネント粒度は粗めでなるべく素のHTMLを触れるように
+    - 上記前提のため、jQueryを用いたDOM操作も許容
 
 ### TODO
 
+- Vue.jsのバージョン上げ(1.0)
+- jQuery利用箇所の一部コンポーネント化(よりシンプルになるのであれば)
 - ドキュメントリファクタ
