@@ -42,7 +42,7 @@ export class ComponentBuilder {
     this.options.attr.el = this.options.attr.el ? this.options.attr.el : {}
     this.options.attr.el.message = this.options.attr.el.message ? this.options.attr.el.message : '.l-message'
     this.options.attr.el.modelPrefix = this.options.attr.el.modelPrefix ? this.options.attr.el.modelPrefix : '.l-model-'
-    let el = (typeof options.el === 'function') ? options.el() : 'body'
+    let el = (typeof options.el === 'function') ? options.el() : (options.el ? options.el : 'body')
     this.options.el = () => el
     let data = (typeof options.data === 'function') ? options.data() : options.data
     this.options.data = () => data

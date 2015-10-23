@@ -32,7 +32,6 @@ export default new Option.PanelCrudBuilder({
     actionSuccessMessage: function() { return "依頼を受け付けました" },
     registerData: function() {
       this.item.currency = "JPY"
-      console.log('ok')
       return this.item
     }
   }
