@@ -7,7 +7,7 @@
     .panel-body
       .alert.alert-warning ログインしていないか一定時間操作がありませんでした。
     .panel-footer
-      a.btn.btn-block.btn-default(v-link="'/login'")
+      a.btn.btn-block.btn-default(v-link="{path: '/login'}")
         |　ログイン画面へ戻る
 </template>
 
