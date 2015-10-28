@@ -30,8 +30,8 @@
         .tab-pane#deposit
           |　TBD
         .tab-pane#withdrawal.active
-          div(v-component="asset-withdrawal-crud")
-          div(v-component="asset-withdrawal-list")
+          div(is="asset-withdrawal-crud")
+          div(is="asset-withdrawal-list")
         .tab-pane#cashflow
           |　TBD
   hr
