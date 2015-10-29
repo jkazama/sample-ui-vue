@@ -64,9 +64,7 @@ export class ComponentBuilder {
   // 初期化時の拡張情報
   defaultExtension() {
     return {
-      el: {
-        scrollBody: '.panel-body'
-      }
+      el: { scrollBody: '.panel-body' }
     }
   }
   // 初期化時のdata情報
@@ -241,13 +239,10 @@ export class ComponentBuilder {
 # ・path属性の定義
 # ・createdメソッド内でinitializedを呼び出す
 # ---
-# - 拡張属性[attr] -
+# - 拡張属性[ext] -
 # initialSearch: 初回検索を行うか(未指定時はtrue)
 # paging: ページング検索を行うか(未指定時はfalse)
-# el.search: 検索条件要素(未指定時は.l-panel-search)
-# el.listBody: 一覧表示要素(未指定時は.l-list-body)
-# el.listCount: 検索結果件数表示要素(未指定時は.l-list-cnt span)
-# el.listWaitRow: 検索中の処理待ちアイコン要素(未指定時は.l-list-wait-row)
+# el.scrollBody: 例外発生時にスクロール制御する際の親el(未指定時は.panel-body)
 # - グローバル属性 -
 # path: 検索APIパス(必須: 標準でapiUrlへ渡されるパス)
 # - 予約Data[data] -
@@ -270,10 +265,7 @@ export class PanelListBuilder extends ComponentBuilder {
     return {
       initialSearch: true,
       paging: false,
-      el: {
-        scrollBody: '.panel-body',
-        listBody: '.l-list-body',
-      }
+      el: { scrollBody: '.panel-body' }
     }
   }
   // 初期化時のdata情報
@@ -288,7 +280,6 @@ export class PanelListBuilder extends ComponentBuilder {
     if (!this.options.path) throw new Error('path属性は必須です')
   }
   loadOverrideMethods() { return {
-    $body: function() { return $(this.ext().el.listBody, $(this.$el)) },
     // 初期化後処理。Vue.jsのcreatedメソッドから呼び出す事で以下の処理が有効化されます。
     // ・listBody要素のbottomイベントに自動ページング処理を紐付け
     // ・初期検索を実行
@@ -388,7 +379,7 @@ export class PanelListBuilder extends ComponentBuilder {
 # ・createdメソッド内でinitializedを呼び出す
 # また利用する際は登録時にshowRegister。変更/削除時にshowUpdateを呼び出すようにしてください。
 # ---
-# - 拡張属性[attributes] -
+# - 拡張属性[ext] -
 # popup: ポップアップパネルの時はtrue
 # flattenItem: 更新時に与えたitemをflattenItem(ネストさせないオブジェクト化)とするか
 # el.scrollBody: 例外発生時にスクロール制御する際の親el(未指定時は.panel-body)
@@ -410,8 +401,6 @@ export class PanelListBuilder extends ComponentBuilder {
 # registerPath: 登録先パスを生成します
 # updatePath: 変更先パスを生成します
 # deletePath: 削除先パスを生成します
-# startAction: イベント開始処理を行います。(2度押し対応)
-# endAction: イベント完了処理を行います。(2度押し対応)
 # actionSuccess: 成功時のイベント処理
 # actionSuccessMessage: 登録/変更/削除時の表示文言
 # actionSuccessAfter: 成功時のイベント後処理
@@ -427,9 +416,7 @@ export class PanelCrudBuilder extends ComponentBuilder {
     return {
       popup: false,
       flattenItem: false,
-      el: {
-        scrollBody: '.panel-body'
-      }
+      el: { scrollBody: '.panel-body' }
     }
   }
   // 初期化時のdata情報
