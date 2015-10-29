@@ -2,10 +2,10 @@
 
 <template lang="jade">
 .l-withdrawal-crud
-  .alert.alert-dismissible.l-message
+  div(v-message="global")
   .row.l-row
     .col-md-4
-      .input-group.l-model-absAmount
+      .input-group(v-message="absAmount")
         input.form-control(type="text" placeholder="出金金額" v-model="item.absAmount" @keydown.enter="register")
         span.input-group-addon 円
     .col-md-2

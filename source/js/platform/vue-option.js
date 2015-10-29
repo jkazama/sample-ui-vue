@@ -1,6 +1,7 @@
 // ### Vue向け オプションビルダー ###
 
 import Param from 'variables'
+import {Level, Event} from 'constants'
 import * as Lib from "platform/plain"
 
 /**
@@ -12,8 +13,6 @@ import * as Lib from "platform/plain"
 # 本クラスを利用する際は初期化時に以下の設定が必要です。
 # ・createdメソッド内でinitializedを呼び出す
 # ---
-# - 拡張属性[attr] -
-# el.message: メッセージ表示用のエレメント属性(未指定時は.l-message)
 # - 標準API
 # show: パネルを表示する
 # hide: パネルを非表示にする
@@ -40,12 +39,13 @@ export class ComponentBuilder {
     this.options = _.clone(options)
     this.options.attr = this.options.attr ? this.options.attr : {}
     this.options.attr.el = this.options.attr.el ? this.options.attr.el : {}
-    this.options.attr.el.message = this.options.attr.el.message ? this.options.attr.el.message : '.l-message'
-    this.options.attr.el.modelPrefix = this.options.attr.el.modelPrefix ? this.options.attr.el.modelPrefix : '.l-model-'
+    // binding el
     let el = (typeof options.el === 'function') ? options.el() : (options.el ? options.el : 'body')
     this.options.el = () => el
+    // binding data
     let data = (typeof options.data === 'function') ? options.data() : options.data
-    this.options.data = () => data
+    this.options.data = () => Object.assign(this.defaultData(), data)
+    // binding method
     this.defaultMethods = this.loadDefaultMethods()
     this.options.methods = _.clone(this.defaultMethods)
     if (this.optionsOrigin.methods) {
@@ -53,6 +53,9 @@ export class ComponentBuilder {
         this.options.methods[k] = this.optionsOrigin.methods[k]
       })
     }
+  }
+  defaultData() {
+    return {}
   }
   // 初期化時のattributes設定を行います
   bindOptions() { /* 継承先で必要に応じて実装してください */ }
@@ -69,15 +72,10 @@ export class ComponentBuilder {
   }
   loadDefaultMethods() { return {
     attr: function() { return this.$options.attr },
-    $main: function() { return $(this.$el) },
-    $message: function() { return $(this.attr().el.message, this.$main()) },
-    // 指定したdata要素キーに紐づくJQueryオブジェクトを返します
-    // ※事前に対象コントロールに対し「.l-model-[dataKey]」が付与されている必要があります
-    //   ネストオブジェクト対応としてkeyに「.」が含まれていた時は「-」である事を期待します。
-    //   e.x. dataKey: hoge.hoga -> .l-model-hoge-hoga
-    $obj: function(key) {
-      let k = key ? key.replace(/\./g, '-') : ""
-      return this.$main().find(this.attr().el.modelPrefix + k)
+    // 指定したdata要素キーに紐づくカラムメッセージのJQueryオブジェクトを返します
+    // ※事前にv-messageディレクティブで対象コントロールに対して紐付けが行われている必要があります。
+    $columnMessage: function(key) {
+      return $(this.$el).find(`l-message-${key.replace('.', '-')}`)
     },
     // 初期化処理
     initialized: function() {
@@ -85,43 +83,34 @@ export class ComponentBuilder {
     },
     // パネルを表示します
     show: function(speed = 100) {
-      this.message()
       this.clearMessage()
-      this.$main().show(speed)
+      $(this.$el).show(speed)
       this.scrollTop()
     },
     // パネルを隠します
     hide: function() {
-      this.$main().hide()
+      $(this.$el).hide()
     },
-    // $message要素においてメッセージを表示します
-    // message: メッセージ文字列
-    // type: 表示種別(success/warning(default)/danger)
-    message: function(message, type = 'warning', speed = 100) {
-      if (message) {
-        this.$message().text(message)
-        this.$message().removeClassRegex(/\btext-\S+/g)
-        this.$message().removeClassRegex(/\balert-\S+/g)
-        this.$message().addClass(`alert-${type} alert-dismissible`)
-        this.$message().show(speed)
-        Lib.Log.debug(message)
-      } else {
-        this.$message().hide()
-      }
+    // メッセージを通知します。
+    message: function(globalMessage = null, columnMessages = [], level = Level.INFO) {
+      let messages = {global: globalMessage, columns: columnMessages, level: level}
+      if (globalMessage) Lib.Log.debug(messages)
+      this.$emit(Event.MESSAGES, messages)
+    },
+    // エラーメッセージを通知します。
+    messageError: function(globalMessage, columnMessages = [], level = Level.ERROR) {
+      this.message(globalMessage, columnMessages, level)
     },
     // グローバルエラー及び/コントロールエラーを初期化します
     clear: function() {
-      this.message()
       this.clearMessage()
     },
     clearMessage: function() {
-      this.$main().find('.l-message-group .l-message-group-item').remove()
-      this.$main().find('.l-message-group .input-group').unwrap()
-      this.$main().find('.l-message-group .form-control').unwrap()
+      this.message()
     },
     // スクロール位置を最上位へ移動します。elにはスクローラブルな親要素を指定してください
     scrollTop: function(el = '.panel-body') {
-      $(el, this.$main()).scrollTop(0)
+      $(el, $(this.$el)).scrollTop(0)
     },
     // 指定要素(dataに対するパス)を反転した値にします(booleanを想定)
     changeFlag: function(flagPath) {
@@ -149,7 +138,7 @@ export class ComponentBuilder {
       return this.files(el)[0]
     },
     files: function(el) {
-      return $(el, this.$main()).prop('files')
+      return $(el, $(this.$el)).prop('files')
     },
     // 引数に与えたハッシュオブジェクトでネストされたものを「.」付の一階層へ変換します。(引数は上書きしません)
     // {a: {b: {c: 'd'}}} -> {'a.b.c': 'd'}
@@ -174,51 +163,29 @@ export class ComponentBuilder {
     },
     // API実行時の標準例外ハンドリングを行います。
     apiFailure: function(error) {
-      this.clearMessage()
       switch (error.status) {
         case 200:
-          this.message('要求処理は成功しましたが、戻り値の解析に失敗しました', 'warning')
+          this.messageError("要求処理は成功しましたが、戻り値の解析に失敗しました")
           break
         case 400:
-          this.message('入力情報を確認してください')
-          this.renderWarning($.parseJSON(error.responseText))
+          let parsed = this.parseApiError(error)
+          this.messageError(parsed.global ? parsed.global : "入力情報を確認してください", parsed.columns, Level.WARN)
           break
         case 401:
-          this.message('機能実行権限がありません', 'danger')
+          this.messageError("機能実行権限がありません")
           break
         default:
-          this.message('要求処理に失敗しました', 'danger')
+          this.messageError("要求処理に失敗しました")
       }
     },
-    // 例外ハッシュ(要素キー: エラー文字列)をUI要素へ紐づけます。
-    // 要素キーが空文字の時はグローバル例外として取り扱います。
-    // 要素キーが設定されている時はrenderColumnWarningが呼び出されます。
-    renderWarning: function(warn) {
-      var gwarn = null
-      var cwarns = {}
-      Object.keys(warn).forEach((key) => {
-        let value = warn[key]
-        if (key === '') {
-          gwarn = value[0]
-        } else {
-          cwarns[key] = value[0]
-        }
+    parseApiError: function(error) {
+      let errs = JSON.parse(error.responseText)
+      let parsed = {global: null, columns: []}
+      Object.keys(errs).forEach((err) => {
+        if (err) parsed.columns.push({key: err, values: errs[err]})
+        else parsed.global = errs[err]
       })
-      // render global
-      if (gwarn) this.message(gwarn)
-      // render columns
-      Object.keys(cwarns).forEach((key) => this.renderColumnWarning(key, cwarns[key]))
-    },
-    // 指定したdata要素キーに警告エラーメッセージを付与します
-    // UI側入力チェックなどで利用してください
-    // ※事前に対象コントロールに対し「.l-model-[dataKey]」が付与されている必要があります
-    renderColumnWarning: function(key, message) {
-      let $column = this.$obj(key)
-      if ($column.length === 0) return
-      let prevMsg = $column.parent().find(".l-message-group-item").text()
-      if (prevMsg === message) return // 同一メッセージはスルー
-      $column.wrap('<div class="input-group l-message-group" />')
-      $column.parent().append(`<div class="l-message-group-item text-danger">${message}</div>`)
+      return parsed
     },
     // for session
     // ハッシュ情報をログインセッションへ紐付けします
@@ -296,9 +263,9 @@ export class PanelListBuilder extends ComponentBuilder {
     this.options.data = () => data
   }
   loadOverrideMethods() { return {
-    $body: function() { return $(this.attr().el.listBody, this.$main()) },
+    $body: function() { return $(this.attr().el.listBody, $(this.$el)) },
     $waitRow: function() { return $(this.attr().el.listWaitRow, this.$body()) },
-    $count: function() { return $(this.attr().el.listCount, this.$main()) },
+    $count: function() { return $(this.attr().el.listCount, $(this.$el)) },
     // 初期化後処理。Vue.jsのcreatedメソッドから呼び出す事で以下の処理が有効化されます。
     // ・page情報を監視して検索結果の件数を表示する
     // ・listBody要素のbottomイベントに自動ページング処理を紐付け
@@ -317,7 +284,7 @@ export class PanelListBuilder extends ComponentBuilder {
     },
     show: function(speed = 100) {
       this.initSearch()
-      this.$main().show(speed)
+      $(this.$el).show(speed)
     },
     // 検索パネルを表示する際の初期化処理
     initSearch: function() { /* 必要に応じて同名のメソッドで拡張実装してください */ },
@@ -335,7 +302,6 @@ export class PanelListBuilder extends ComponentBuilder {
     },
     // 各種メッセージの他、検索結果を初期化します
     clear: function() {
-      this.message()
       this.clearMessage()
       this.$set('items', [])
     },
@@ -448,7 +414,7 @@ export class PanelCrudBuilder extends ComponentBuilder {
     attr.popup = attr.hasOwnProperty('popup') ? attr.popup : false
     attr.spinner = attr.hasOwnProperty('spinner') ? attr.spinner : true
     attr.flattenItem = attr.hasOwnProperty('flattenItem') ? attr.flattenItem : false
-    attr.el.id = attr.el.id ? attr.el.id : 'id'
+    attr.el.id = attr.el.id ? attr.el.id : '.l-model-id'
     attr.el.scrollBody = attr.el.scrollBody ? attr.el.scrollBody : '.panel-body'
   }
   // 初期化時のmethods設定を行います
@@ -471,7 +437,7 @@ export class PanelCrudBuilder extends ComponentBuilder {
     this.options.data = () => data
   }
   loadOverrideMethods() { return {
-    $id: function() { return $(this.attr().el.modelPrefix + this.attr().el.id, this.$main()) },
+    $id: function() { return $(this.attr().el.id, $(this.$el)) },
     // 初期化後処理。Vue.jsのcreatedメソッドから呼び出す事で以下の処理が有効化されます。
     // ・ポップアップ指定に伴う自身の非表示制御
     initialized: function() {
@@ -501,7 +467,7 @@ export class PanelCrudBuilder extends ComponentBuilder {
     // 具体的にはイベントオブジェクト(ボタンを想定)をdisableにして末尾に処理中のspinnerを表示します。
     startAction: function(event, el = null) {
       if (!event || !this.attr().spinner) return null
-      let $btn = $(el ? el : event.target)
+      let $btn = el ? $(el, $(this.$el)) : $(event.target)
       $btn.disable()
       $btn.append('<i class="fa fa-spinner fa-spin l-spin-crud" />')
       return $btn
@@ -531,7 +497,6 @@ export class PanelCrudBuilder extends ComponentBuilder {
     },
     // 各種メッセージの他、登録情報を初期化します
     clear: function() {
-      this.message()
       this.clearMessage()
       Object.keys(this.item).forEach((k) => this.$set(`item.${k}`, null))
     },
@@ -594,7 +559,7 @@ export class PanelCrudBuilder extends ComponentBuilder {
       } else {
         if (this.updateFlag === false) this.clear()
         this.scrollTop()
-        this.message(this.actionSuccessMessage(), 'success')
+        this.message(this.actionSuccessMessage())
       }
       Lib.Log.debug('success')
       this.actionSuccessAfter(v)
@@ -633,8 +598,8 @@ export class PanelCrudBuilder extends ComponentBuilder {
     scrollToColumn: function(bodyEl, cwarns) {
       let keys = Object.keys(cwarns)
       if (0 < keys.length) {
-        let $body = $(bodyEl, this.$main())
-        let $target = this.$obj(keys[0])
+        let $body = $(bodyEl, $(this.$el))
+        let $target = this.$columnMessage(keys[0])
         if (0 < $target.length) {
           let bodyTop = $body.offset() ? $body.offset().top : 0
           $body.scrollTop($target.offset().top - bodyTop + $body.scrollTop())

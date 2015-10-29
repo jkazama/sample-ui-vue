@@ -1,6 +1,6 @@
 {
   "name": "sample-ui-vue",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "",
   "main": "source/js/main.js",
   "scripts": {
