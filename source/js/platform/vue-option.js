@@ -1,8 +1,9 @@
 // ### Vue向け オプションビルダー ###
 
 import Param from 'variables'
-import {Level, Event} from 'constants'
+import {Level} from 'constants'
 import * as Lib from "platform/plain"
+import {Event, Action, Style} from 'platform/vue-constants'
 
 /**
 # Vue向けOptionビルダークラス
@@ -13,6 +14,8 @@ import * as Lib from "platform/plain"
 # 本クラスを利用する際は初期化時に以下の設定が必要です。
 # ・createdメソッド内でinitializedを呼び出す
 # ---
+# - 拡張属性[attributes] -
+# el.scrollBody: 例外発生時にスクロール制御する際の親el(未指定時は.panel-body)
 # - 標準API
 # show: パネルを表示する
 # hide: パネルを非表示にする
@@ -37,8 +40,9 @@ export class ComponentBuilder {
     if (!options) return Lib.Log.error('コンストラクタ引数は必須です')
     this.optionsOrigin = options ? options : {}
     this.options = _.clone(options)
-    this.options.attr = this.options.attr ? this.options.attr : {}
-    this.options.attr.el = this.options.attr.el ? this.options.attr.el : {}
+    // binding extension
+    let ext = this.options.ext ? this.options.ext : {}
+    this.options.ext = Object.assign(this.defaultExtension(), ext)
     // binding el
     let el = (typeof options.el === 'function') ? options.el() : (options.el ? options.el : 'body')
     this.options.el = () => el
@@ -47,37 +51,43 @@ export class ComponentBuilder {
     this.options.data = () => Object.assign(this.defaultData(), data)
     // binding method
     this.defaultMethods = this.loadDefaultMethods()
+    this.overrideMethods = this.loadOverrideMethods()
     this.options.methods = _.clone(this.defaultMethods)
+    let m = this.options.methods
+    Object.keys(this.overrideMethods).forEach((k) => m[k] = this.overrideMethods[k])
     if (this.optionsOrigin.methods) {
       Object.keys(this.optionsOrigin.methods).forEach((k) => {
-        this.options.methods[k] = this.optionsOrigin.methods[k]
+        m[k] = this.optionsOrigin.methods[k]
       })
     }
   }
+  // 初期化時の拡張情報
+  defaultExtension() {
+    return {
+      el: {
+        scrollBody: '.panel-body'
+      }
+    }
+  }
+  // 初期化時のdata情報
   defaultData() {
     return {}
   }
-  // 初期化時のattributes設定を行います
-  bindOptions() { /* 継承先で必要に応じて実装してください */ }
-  // 初期化時のmethods設定を行います
-  bindMethods() { /* 継承先で必要に応じて実装してください */ }
   // データ初期化処理を行います
   setup() { /* 継承先で必要に応じて実装してください */ }
   build() {
-    // 定義指定に対する拡張挿入
-    this.bindOptions()
-    this.bindMethods()
     this.setup()
     return this.options
   }
+  loadOverrideMethods() { /** 継承先で上書きメソッドを定義してください */ return {}}
   loadDefaultMethods() { return {
-    attr: function() { return this.$options.attr },
+    ext: function() { return this.$options.ext },
     // 指定したdata要素キーに紐づくカラムメッセージのJQueryオブジェクトを返します
     // ※事前にv-messageディレクティブで対象コントロールに対して紐付けが行われている必要があります。
     $columnMessage: function(key) {
-      return $(this.$el).find(`l-message-${key.replace('.', '-')}`)
+      return $(this.$el).find(`${Style.MessagePrefix}${key.replace('.', '-')}`)
     },
-    // 初期化処理
+    // 初期化処理。createdで呼び出される事を期待します。
     initialized: function() {
       this.clear()
     },
@@ -95,11 +105,17 @@ export class ComponentBuilder {
     message: function(globalMessage = null, columnMessages = [], level = Level.INFO) {
       let messages = {global: globalMessage, columns: columnMessages, level: level}
       if (globalMessage) Lib.Log.debug(messages)
-      this.$emit(Event.MESSAGES, messages)
+      this.$emit(Event.Messages, messages)
     },
     // エラーメッセージを通知します。
     messageError: function(globalMessage, columnMessages = [], level = Level.ERROR) {
       this.message(globalMessage, columnMessages, level)
+      // 例外発生箇所へ移動
+      if (!columnMessages || columnMessages.length === 0) {
+        this.scrollTop()
+      } else {
+        this.scrollTo(this.ext().el.scrollBody, Object.keys(columnMessages)[0])
+      }
     },
     // グローバルエラー及び/コントロールエラーを初期化します
     clear: function() {
@@ -108,8 +124,20 @@ export class ComponentBuilder {
     clearMessage: function() {
       this.message()
     },
+    // 指定したel内の要素キーで例外を持つ最上位のコントロールへスクロール移動します。
+    // ※有効化するには事前に各カラム要素に対してv-messageの付与が必要です。
+    scrollTo: function(el, keyColumn) {
+      let $body = $(el, $(this.$el))
+      let $target = this.$columnMessage(keyColumn)
+      if (0 < $target.length) {
+        let bodyTop = $body.offset() ? $body.offset().top : 0
+        $body.scrollTop($target.offset().top - bodyTop + $body.scrollTop())
+      } else {
+        this.scrollTop()
+      }
+    },
     // スクロール位置を最上位へ移動します。elにはスクローラブルな親要素を指定してください
-    scrollTop: function(el = '.panel-body') {
+    scrollTop: function(el = Style.DefaultScrollTop) {
       $(el, $(this.$el)).scrollTop(0)
     },
     // 指定要素(dataに対するパス)を反転した値にします(booleanを想定)
@@ -192,8 +220,10 @@ export class ComponentBuilder {
     loginSession: function(sessionHash) { Lib.Session.login(sessionHash) },
     // ログインセッション情報を破棄します
     logoutSession: function() { Lib.Session.logout() },
+    // ログイン状態の時はtrue
+    isLogin: function() { return Lib.Session.hasSession() },
     // セッション情報を取得します。key未指定時はログインセッションハッシュを返します
-    sessionValue: function(key = null) { Lib.Session.value(key) },
+    sessionValue: function(key = null) { return Lib.Session.value(key) },
     // セッション情報を取得します。key未指定時はログインセッションハッシュを返します
     hasAuthority: function(id) {
       let list = this.sessionValue() ? this.sessionValue().authorities : null
@@ -224,6 +254,7 @@ export class ComponentBuilder {
 # searchFlag: 検索パネル表示状態
 # items: 検索結果一覧
 # page: ページング情報
+# updating: 処理中の時はtrue
 # - 拡張メソッド[methods] -
 # search: 検索する
 # searchData: 検索条件をハッシュで生成する
@@ -233,54 +264,41 @@ export class ComponentBuilder {
 export class PanelListBuilder extends ComponentBuilder {
   constructor(options) {
     super(options)
-    this.overrideMethods = this.loadOverrideMethods()
   }
-  // 初期化時のattributes設定を行います
-  bindOptions() {
-    let attr = this.options.attr
-    attr.initialSearch = attr.hasOwnProperty('initialSearch') ? attr.initialSearch : true
-    attr.paging = attr.hasOwnProperty('paging') ? attr.paging : false
-    attr.el.listBody = (attr.el && attr.el.listBody) ? attr.el.listBody : '.l-list-body'
-    attr.el.listCount = (attr.el && attr.el.listCount) ? attr.el.listCount : '.l-list-cnt span'
-    attr.el.listWaitRow = (attr.el && attr.el.listWaitRow) ? attr.el.listWaitRow : '.l-list-wait-row'
-  }
-  // 初期化時のmethods設定を行います
-  bindMethods() {
-    let m = this.options.methods
-    Object.keys(this.overrideMethods).forEach((k) => m[k] = this.overrideMethods[k])
-    if (this.optionsOrigin.methods) {
-      Object.keys(this.optionsOrigin.methods).forEach((k) => m[k] = this.optionsOrigin.methods[k])
+  // 初期化時の拡張情報
+  defaultExtension() {
+    return {
+      initialSearch: true,
+      paging: false,
+      el: {
+        scrollBody: '.panel-body',
+        listBody: '.l-list-body',
+      }
     }
   }
-  // 初期化処理を行います
+  // 初期化時のdata情報
+  defaultData() {
+    return {
+      items: [],
+      page: (this.options.ext.paging ? {page: 1, total: 0} : null),
+      updating: false    // 処理中判定
+    }
+  }
   setup() {
     if (!this.options.path) throw new Error('path属性は必須です')
-    var data = this.optionsOrigin.data ? this.optionsOrigin.data : {}
-    if (typeof data === 'function') data = data()
-    data.items = data.items ? data.items : []
-    data.page = this.options.attr.paging ? {page: 1, total: 0} : null
-    // 予約属性
-    this.options.data = () => data
   }
   loadOverrideMethods() { return {
-    $body: function() { return $(this.attr().el.listBody, $(this.$el)) },
-    $waitRow: function() { return $(this.attr().el.listWaitRow, this.$body()) },
-    $count: function() { return $(this.attr().el.listCount, $(this.$el)) },
+    $body: function() { return $(this.ext().el.listBody, $(this.$el)) },
     // 初期化後処理。Vue.jsのcreatedメソッドから呼び出す事で以下の処理が有効化されます。
-    // ・page情報を監視して検索結果の件数を表示する
     // ・listBody要素のbottomイベントに自動ページング処理を紐付け
     // ・初期検索を実行
     initialized: function() {
-      this.$waitRow().hide()
       // イベント登録
-      if (this.attr().paging) {
-        this.$watch('page', (page) => this.$count().text(page.total ? page.total : '-1'))
+      if (this.ext().paging) {
         this.$panels.body.onBottom(() => this.next())
-      } else {
-        this.$watch('items', (items) => this.$count().text(this.items.length))
       }
       // 初期化
-      if (this.attr().initialSearch) this.search()
+      if (this.ext().initialSearch) this.search()
     },
     show: function(speed = 100) {
       this.initSearch()
@@ -314,21 +332,21 @@ export class PanelListBuilder extends ComponentBuilder {
       Lib.Log.debug(`- search url: ${this.apiUrl(this.searchPath())}`)
       let param = this.searchData()
       if (0 < Object.keys(param).length) Lib.Log.debug(param)
-      if (this.attr().paging) {
+      if (this.ext().paging) {
         param["page.page"] = this.page.page
       }
       if (append === false) {
         this.clear()
         if (this.page) this.page.page = 1
       }
-      if (this.$waitRow().size()) this.$waitRow().show()
+      this.updating = true
       let success = (data) => {
-        this.$waitRow().hide()
+        this.updating = false
         this.renderList(data, append)
         this.layoutSearch()
       }
       let failure = (error) => {
-        this.$waitRow().hide()
+        this.updating = false
         this.apiFailure(error)
       }
       this.apiGet(this.searchPath(), param, success, failure)
@@ -339,7 +357,7 @@ export class PanelListBuilder extends ComponentBuilder {
       Lib.Log.debug('- search result -')
       Lib.Log.debug(data)
       let list = () => {
-        if (this.attr().paging) {
+        if (this.ext().paging) {
           if (data.page) {
             this.page = data.page
             return data.list
@@ -372,17 +390,14 @@ export class PanelListBuilder extends ComponentBuilder {
 # ---
 # - 拡張属性[attributes] -
 # popup: ポップアップパネルの時はtrue
-# spinner: register呼び出し時に呼び出し元のコントロール末尾に処理中スピナーを表示するか(標準はtrue)
-# list: 親の検索リスト。設定時は更新完了後に検索を自動的に呼び出す。
 # flattenItem: 更新時に与えたitemをflattenItem(ネストさせないオブジェクト化)とするか
-# el.id: IDのinputに紐づく要素キー(未指定時は.l-model-id)
-#   設定時はAPIパス構築時に値が利用されるほか、showUpdate利用時にdisabled状態となる。
 # el.scrollBody: 例外発生時にスクロール制御する際の親el(未指定時は.panel-body)
 # - グローバル属性 -
 # path: CRUD-API基準パス(必須)。
 #   pathが「/hoge/」の時。 登録時: /hoge/, 更新時: /hoge/{idPath}/, 削除時: /hoge/{idPath}/delete
 # - 予約Data[data] -
 # updateFlag: 更新モードの時はtrue
+# updating: 処理中の時はtrue
 # item: 登録/更新情報
 # - 拡張メソッド[methods] -
 # showRegister: 登録モードで表示します
@@ -406,92 +421,74 @@ export class PanelListBuilder extends ComponentBuilder {
 export class PanelCrudBuilder extends ComponentBuilder {
   constructor(options) {
     super(options)
-    this.overrideMethods = this.loadOverrideMethods()
   }
-  // 初期化時のattributes設定を行います
-  bindOptions() {
-    let attr = this.options.attr
-    attr.popup = attr.hasOwnProperty('popup') ? attr.popup : false
-    attr.spinner = attr.hasOwnProperty('spinner') ? attr.spinner : true
-    attr.flattenItem = attr.hasOwnProperty('flattenItem') ? attr.flattenItem : false
-    attr.el.id = attr.el.id ? attr.el.id : '.l-model-id'
-    attr.el.scrollBody = attr.el.scrollBody ? attr.el.scrollBody : '.panel-body'
+  // 初期化時の拡張情報
+  defaultExtension() {
+    return {
+      popup: false,
+      flattenItem: false,
+      el: {
+        scrollBody: '.panel-body'
+      }
+    }
   }
-  // 初期化時のmethods設定を行います
-  bindMethods() {
-    let m = this.options.methods
-    Object.keys(this.overrideMethods).forEach((k) => m[k] = this.overrideMethods[k])
-    if (this.optionsOrigin.methods) {
-      Object.keys(this.optionsOrigin.methods).forEach((k) => m[k] = this.optionsOrigin.methods[k])
+  // 初期化時のdata情報
+  defaultData() {
+    return {
+      item: {},          // 更新対象情報
+      updateFlag: false, // 更新モードの時はtrue
+      updating: false    // 処理中判定
     }
   }
   // 初期化処理を行います
   setup() {
     if (!this.options.path) throw new Error('path属性は必須です')
-    var data = this.optionsOrigin.data ? this.optionsOrigin.data : {}
-    if (typeof data === 'function') data = data()
-    data.item = data.item ? data.item : {}
-    data.updateFlag = data.hasOwnProperty('updateFlag') ? data.updateFlag : false
-    // 予約属性
-    this.itemOrigin = _.clone(data.item)
-    this.options.data = () => data
   }
   loadOverrideMethods() { return {
-    $id: function() { return $(this.attr().el.id, $(this.$el)) },
+    // IDのjQueryオブジェクトを取得します。
+    // 利用する際は事前にv-identifierをIDコンポーネントへ紐付けしている必要があります。
+    $id: function() {
+      return $(`${Style.ColumnPrefix}-id`, $(this.$el))
+    },
     // 初期化後処理。Vue.jsのcreatedメソッドから呼び出す事で以下の処理が有効化されます。
     // ・ポップアップ指定に伴う自身の非表示制御
     initialized: function() {
-      if (this.attr().popup) this.hide()
+      if (this.ext().popup) this.hide()
     },
     // 登録/変更処理を行います。
     // 実行時の接続URLは前述のattributes解説を参照。実際の呼び出しはregisterPath/updatePathの値を利用。
     // 登録情報はregisterDataに依存します。
     // 登録成功時の後処理はactionSuccessAfter、失敗時の後処理はactionFailureAfterを実装する事で差し込み可能です。
     register: function(event) {
-      let $btn = this.startAction(event)
       let path = this.updateFlag ? this.updatePath() : this.registerPath()
       Lib.Log.debug(`- register url: ${this.apiUrl(path)}`)
       let param = this.registerData()
       if (0 < Object.keys(param).length) Lib.Log.debug(param)
+      this.updating = true
       let success = (v) => {
+        this.updating = false
         this.actionSuccess(v)
-        this.endAction($btn)
       }
       let failure = (error) => {
+        this.updating = false
         this.actionFailure(error)
-        this.endAction($btn)
       }
       this.apiPost(path, param, success, failure)
-    },
-    // イベント開始処理を行います。
-    // 具体的にはイベントオブジェクト(ボタンを想定)をdisableにして末尾に処理中のspinnerを表示します。
-    startAction: function(event, el = null) {
-      if (!event || !this.attr().spinner) return null
-      let $btn = el ? $(el, $(this.$el)) : $(event.target)
-      $btn.disable()
-      $btn.append('<i class="fa fa-spinner fa-spin l-spin-crud" />')
-      return $btn
-    },
-    // イベント終了処理を行います。startActionの戻り値を引数に設定してください
-    endAction: function($btn) {
-      if (!$btn || !this.attr().spinner) return
-      $('.l-spin-crud', $btn).remove()
-      $btn.enable()
     },
     // 削除処理を行います。
     // 削除時の接続URLは前述のattributes解説を参照。実際の呼び出しはdeletePathの値を利用。
     // 削除成功時の後処理はactionSuccessAfter、失敗時の後処理はactionFailureAfterを実装する事で差し込み可能です。
     delete: function(event) {
-      let $btn = this.startAction(event)
       let path = this.deletePath()
       Lib.Log.debug(`- delete url: ${this.apiUrl(path)}`)
+      this.updating = true
       let success = (v) => {
+        this.updating = false
         this.actionSuccess(v)
-        this.endAction($btn)
       }
       let failure = (error) => {
+        this.updating = false
         this.actionFailure(error)
-        this.endAction($btn)
       }
       this.apiPost(path, {}, success, failure)
     },
@@ -505,7 +502,6 @@ export class PanelCrudBuilder extends ComponentBuilder {
       this.hide()
       this.updateFlag = false
       this.clear()
-      this.$id().removeAttr("disabled")
       this.initRegister()
       this.show()
       Lib.Log.debug(`show register [${this.$el ? this.$el.className : 'unknown'}]`)
@@ -517,10 +513,9 @@ export class PanelCrudBuilder extends ComponentBuilder {
       this.hide()
       this.updateFlag = true
       this.clear()
-      this.$id().attr('disabled', 'true')
       let v = _.clone(item)
       this.initUpdate(v)
-      this.item = this.attr().flattenItem === true ? this.flattenItem(v) : v
+      this.item = this.ext().flattenItem === true ? this.flattenItem(v) : v
       this.layoutUpdate()
       this.show()
       Lib.Log.debug(`show update [${this.$el ? this.$el.className : "unknown"}]`)
@@ -552,8 +547,8 @@ export class PanelCrudBuilder extends ComponentBuilder {
     },
     // 登録/変更/削除時の成功処理を行います。
     actionSuccess: function(v) {
-      this.$dispatch('action-success-crud', v)
-      if (this.attr().popup) {
+      this.$dispatch(Action.CrudSuccess, v)
+      if (this.ext().popup) {
         this.clear()
         this.hide()
       } else {
@@ -571,42 +566,9 @@ export class PanelCrudBuilder extends ComponentBuilder {
     // 登録/変更/削除時の失敗処理を行います。
     actionFailure: function(xhr) {
       this.apiFailure(xhr)
-      var gwarn = null
-      var cwarns = {}
-      switch (xhr.status) {
-        case 400:
-          let warn = $.parseJSON(xhr.responseText)
-          Object.keys(warn).forEach((key) => {
-            let value = warn[key]
-            if (key === '') {
-              gwarn = value[0]
-            } else {
-              cwarns[key] = value[0]
-            }
-          })
-          if (gwarn) {
-            this.scrollTop()
-          } else {
-            this.scrollToColumn(this.attr().el.scrollBody, cwarns)
-          }
-      }
-      this.actionFailureAfter(xhr, gwarn, cwarns)
+      this.actionFailureAfter(xhr)
     },
     // 登録/変更/削除時の失敗後処理を行います。
-    actionFailureAfter: function(xhr, gwarn, cwarns) { /* 必要に応じて同名のメソッドで拡張実装してください */ },
-    // 指定したbodyEl内の要素キーで例外を持つ最上位のコントロールへスクロール移動します。
-    scrollToColumn: function(bodyEl, cwarns) {
-      let keys = Object.keys(cwarns)
-      if (0 < keys.length) {
-        let $body = $(bodyEl, $(this.$el))
-        let $target = this.$columnMessage(keys[0])
-        if (0 < $target.length) {
-          let bodyTop = $body.offset() ? $body.offset().top : 0
-          $body.scrollTop($target.offset().top - bodyTop + $body.scrollTop())
-        } else {
-          this.scrollTop()
-        }
-      }
-    }
+    actionFailureAfter: function(xhr) { /* 必要に応じて同名のメソッドで拡張実装してください */ }
   }}
 }

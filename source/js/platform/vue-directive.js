@@ -1,4 +1,6 @@
-import {Level, Event} from 'constants'
+import {Level} from 'constants'
+import {Event, Style} from 'platform/vue-constants'
+
 
 /** Directive
  * Vue.jsのカスタムディレクティブを定義します。
@@ -18,9 +20,9 @@ export default function() {
   Vue.directive('message', {
     bind: function() {
       if (this.expression !== 'global') { // カラムの際は固有のカラムクラスタグを付与
-        $(this.el).addClass(`l-message-${this.expression.replace('.', '-')}`)
+        $(this.el).addClass(`${Style.MessagePrefix}${this.expression.replace('.', '-')}`)
       }
-      this.vm.$on('messages', this.handleMessages.bind(this))
+      this.vm.$on(Event.Messages, this.handleMessages.bind(this))
     },
     unbind: function() {},
     handleMessages: function(messages) {
@@ -79,6 +81,42 @@ export default function() {
         if (err) return err.values[0]
       }
       return null
+    }
+  })
+
+  /**
+   * v-disableを定義したコンポーネントに実行中操作不可の概念を付与します。
+   * Crudパネルと併用しての利用を想定しています。
+   * 使用例 v-disable="updating"          -> updatingがtrueの時はdisableにする
+   * 使用例 v-disable:spinner="updating"  -> updating中にspinnerを表示させる
+   */
+  Vue.directive('disable', function(updating) {
+    let $el = $(this.el)
+    let spinner = this.arg === 'spinner'
+    if (updating) {
+      $el.disable()
+      if (spinner) $el.append('<i class="fa fa-spinner fa-spin" />')
+    } else {
+      $el.enable()
+      if (spinner) $el.find('.fa-spinner').remove()
+    }
+  })
+
+  /**
+   * v-identityを定義したコンポーネントにIDの概念を付与します。
+   * Crudパネルと併用しての利用を想定しています。
+   * 使用例 v-identity="accountId"        -> 引数にはdataのPKフィールドを指定
+   */
+  Vue.directive('identity', {
+    bind: function() {
+      $(this.el).addClass(`${Style.ColumnPrefix}-id`)
+      vm.$watch('updateFlag', (updateFlag) => {
+        if (updateFlag) {
+          $(this.el).disable()
+        } else {
+          $(this.el).enable()
+        }
+      })
     }
   })
 

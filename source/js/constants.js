@@ -11,8 +11,3 @@ export const Level = {
   WARN: 30,
   ERROR: 40
 }
-
-export const Event = {
-  MESSAGES: "messages"
-}
-

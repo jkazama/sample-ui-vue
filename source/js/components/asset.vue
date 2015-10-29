@@ -45,6 +45,7 @@
 </template>
 
 <script lang="babel">
+import {Action} from 'platform/vue-constants'
 import * as Option from "platform/vue-option"
 import withdrawalCrud from "components/partials/asset-withdrawal-crud"
 import withdrawalList from "components/partials/asset-withdrawal-list"
@@ -54,7 +55,7 @@ export default new Option.ComponentBuilder({
     "asset-withdrawal-list": withdrawalList
   },
   ready: function() {
-    this.$on('action-success-crud', (v) => this.$children[1].search())
+    this.$on(Action.CrudSuccess, (v) => this.$children[1].search())
   }
 }).build()
 </script>

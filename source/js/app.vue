@@ -44,7 +44,13 @@ export default new Option.ComponentBuilder({
     checkLogin: function(success) {
       let failure = (err) => {
         Lib.Log.debug('ログイン情報を確認できませんでした')
-        this.$route.router.go("/timeout")
+        this.logined = false
+        if (this.sessionValue()) {
+          this.logoutSession()
+          this.$route.router.go("/timeout")
+        } else {
+          this.$route.router.go("/login")
+        }
       }
       Lib.Ajax.get(`${Param.Api.root}/account/loginStatus`, {}, success, failure)
     },
