@@ -1,3 +1,8 @@
+/*----------------------------------
+ - main.js -
+ SPA Entry File
+----------------------------------*/
+
 // JQuery Dependency
 import jquery from 'platform/jquery'
 jquery()
@@ -15,6 +20,6 @@ import routes from "routes"
 let router = new VueRouter()
 router.map(routes)
 
-// App
+// Applicaiton Initialize
 import AppComponent from "app"
 router.start(Vue.extend(AppComponent), "#app")

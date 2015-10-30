@@ -1,3 +1,8 @@
+/*----------------------------------
+ - routes.js -
+ vue-routerのSPAルーティングで利用される定義
+----------------------------------*/
+
 import login from "components/login"
 import timeout from "components/timeout"
 import top from "components/top"

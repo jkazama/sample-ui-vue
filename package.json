@@ -1,11 +1,11 @@
 {
   "name": "sample-ui-vue",
-  "version": "0.5.0",
-  "description": "",
+  "version": "0.5.1",
+  "description": "Vue.js Boilerplate",
   "main": "source/js/main.js",
   "scripts": {
     "start": "gulp",
-    "build": "gulp build"
+    "build": "gulp build-prod"
   },
   "author": "jkazama",
   "license": "MIT",

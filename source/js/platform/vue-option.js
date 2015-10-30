@@ -1,4 +1,7 @@
-// ### Vue向け オプションビルダー ###
+/*----------------------------------
+ - vue-filter.js -
+ Vue.jsのコンストラクタ引数ビルダー
+ ---------------------------------*/
 
 import Param from 'variables'
 import {Level} from 'constants'
@@ -6,34 +9,34 @@ import * as Lib from "platform/plain"
 import {Event, Action, Style} from 'platform/vue-constants'
 
 /**
-# Vue向けOptionビルダークラス
-# ファイルアップロードや確認ダイアログ/単純表示等、シンプルな処理が必要なときは
-# 本インスタンスのbuild実行戻り値(optionハッシュ)を元にVue.jsオブジェクトを作成してください。
-# 作成方式は通常のVue.jsと同様です。(new Vue / Vue.extend / Vue.component)
-# メソッド定義は「function」を明記する記法で行ってください。(メソッド内部では「() =>」を用いた記法も利用可)
-# 本クラスを利用する際は初期化時に以下の設定が必要です。
-# ・createdメソッド内でinitializedを呼び出す
-# ---
-# - 拡張属性[attributes] -
-# el.scrollBody: 例外発生時にスクロール制御する際の親el(未指定時は.panel-body)
-# - 標準API
-# show: パネルを表示する
-# hide: パネルを非表示にする
-# clear: グローバルエラー及び/コントロールエラーを初期化する
-# scrollTop: スクロール位置を最上位へ移動する
-# changeFlag: 指定要素(dataに対するパス)を反転した値にする(booleanを想定)
-# apiGet: APIへのGET処理を行う
-# apiPost: APIへのPOST処理を行う
-# apiUpload: APIへのファイルアップロード処理(POST)を行う
-# apiUrl: APIプリフィックスを付与したURLを返す
-# apiFailure: API実行時の標準例外ハンドリング
-# file: type=fileの値参照を返す。apiUploadのdata値へ設定する際に利用
-# files: type=fileの値参照一覧を返す。
-# flattenItem: 引数に与えたハッシュオブジェクトを結合文字列へ変換する
-# paramArray:　配列(オブジェクト)をフラットなパラメタ要素へ展開
-# renderWarning: 例外情報を画面へ反映する
-# renderColumnWarning: コントロール単位の画面例外反映
-*/
+　* Vue向けOptionビルダークラス
+　* ファイルアップロードや確認ダイアログ/単純表示等、シンプルな処理が必要なときは
+　* 本インスタンスのbuild実行戻り値(optionハッシュ)を元にVue.jsオブジェクトを作成してください。
+　* 作成方式は通常のVue.jsと同様です。(new Vue / Vue.extend / Vue.component)
+　* メソッド定義は「function」を明記する記法で行ってください。(メソッド内部では「() =>」を用いた記法も利用可)
+　* 本クラスを利用する際は初期化時に以下の設定が必要です。
+　* ・createdメソッド内でinitializedを呼び出す
+　* ---
+　* - 拡張属性[attributes] -
+　* el.scrollBody: 例外発生時にスクロール制御する際の親el(未指定時は.panel-body)
+　* - 標準API
+　* show: パネルを表示する
+　* hide: パネルを非表示にする
+　* clear: グローバルエラー及び/コントロールエラーを初期化する
+　* scrollTop: スクロール位置を最上位へ移動する
+　* changeFlag: 指定要素(dataに対するパス)を反転した値にする(booleanを想定)
+　* apiGet: APIへのGET処理を行う
+　* apiPost: APIへのPOST処理を行う
+　* apiUpload: APIへのファイルアップロード処理(POST)を行う
+　* apiUrl: APIプリフィックスを付与したURLを返す
+　* apiFailure: API実行時の標準例外ハンドリング
+　* file: type=fileの値参照を返す。apiUploadのdata値へ設定する際に利用
+　* files: type=fileの値参照一覧を返す。
+　* flattenItem: 引数に与えたハッシュオブジェクトを結合文字列へ変換する
+　* paramArray:　配列(オブジェクト)をフラットなパラメタ要素へ展開
+　* renderWarning: 例外情報を画面へ反映する
+　* renderColumnWarning: コントロール単位の画面例外反映
+ */
 export class ComponentBuilder {
   // 初期化コンストラクタ
   constructor(options) {
@@ -231,31 +234,31 @@ export class ComponentBuilder {
 }
 
 /**
-# 検索を前提としたVueOptionビルダークラス
-# 一覧パネル等で利用してください。ページング検索(自動ロード方式)もサポートしています。
-# (API側でPagingListを返す必要があります)
-# メソッド定義は「function」を明記する記法で行ってください。(メソッド内部では「() =>」を用いた記法も利用可)
-# 本クラスを利用する際は初期化時に以下の設定が必要です。
-# ・path属性の定義
-# ・createdメソッド内でinitializedを呼び出す
-# ---
-# - 拡張属性[ext] -
-# initialSearch: 初回検索を行うか(未指定時はtrue)
-# paging: ページング検索を行うか(未指定時はfalse)
-# el.scrollBody: 例外発生時にスクロール制御する際の親el(未指定時は.panel-body)
-# - グローバル属性 -
-# path: 検索APIパス(必須: 標準でapiUrlへ渡されるパス)
-# - 予約Data[data] -
-# searchFlag: 検索パネル表示状態
-# items: 検索結果一覧
-# page: ページング情報
-# updating: 処理中の時はtrue
-# - 拡張メソッド[methods] -
-# search: 検索する
-# searchData: 検索条件をハッシュで生成する
-# searchPath: 検索時の呼び出し先URLパスを生成する(apiUrlへ渡されるパス)
-# layoutSearch: 検索後のレイアウト調整を行う(検索結果は@itemsに格納済)
-*/
+ * 検索を前提としたVueOptionビルダークラス
+ * 一覧パネル等で利用してください。ページング検索(自動ロード方式)もサポートしています。
+ * (API側でPagingListを返す必要があります)
+ * メソッド定義は「function」を明記する記法で行ってください。(メソッド内部では「() =>」を用いた記法も利用可)
+ * 本クラスを利用する際は初期化時に以下の設定が必要です。
+ * ・path属性の定義
+ * ・createdメソッド内でinitializedを呼び出す
+ * ---
+ * - 拡張属性[ext] -
+ * initialSearch: 初回検索を行うか(未指定時はtrue)
+ * paging: ページング検索を行うか(未指定時はfalse)
+ * el.scrollBody: 例外発生時にスクロール制御する際の親el(未指定時は.panel-body)
+ * - グローバル属性 -
+ * path: 検索APIパス(必須: 標準でapiUrlへ渡されるパス)
+ * - 予約Data[data] -
+ * searchFlag: 検索パネル表示状態
+ * items: 検索結果一覧
+ * page: ページング情報
+ * updating: 処理中の時はtrue
+ * - 拡張メソッド[methods] -
+ * search: 検索する
+ * searchData: 検索条件をハッシュで生成する
+ * searchPath: 検索時の呼び出し先URLパスを生成する(apiUrlへ渡されるパス)
+ * layoutSearch: 検索後のレイアウト調整を行う(検索結果は@itemsに格納済)
+ */
 export class PanelListBuilder extends ComponentBuilder {
   constructor(options) {
     super(options)
@@ -371,42 +374,42 @@ export class PanelListBuilder extends ComponentBuilder {
 }
 
 /**
-# 特定情報の登録/変更/削除を前提としたOptionビルダークラス
-# 情報に対するCRUD目的のパネルで利用してください。
-# メソッド定義は「function」を明記する記法で行ってください。(メソッド内部では「() =>」を用いた記法も利用可)
-# 本クラスを利用する際は初期化時に以下の設定が必要です。
-# ・path属性の定義
-# ・createdメソッド内でinitializedを呼び出す
-# また利用する際は登録時にshowRegister。変更/削除時にshowUpdateを呼び出すようにしてください。
-# ---
-# - 拡張属性[ext] -
-# popup: ポップアップパネルの時はtrue
-# flattenItem: 更新時に与えたitemをflattenItem(ネストさせないオブジェクト化)とするか
-# el.scrollBody: 例外発生時にスクロール制御する際の親el(未指定時は.panel-body)
-# - グローバル属性 -
-# path: CRUD-API基準パス(必須)。
-#   pathが「/hoge/」の時。 登録時: /hoge/, 更新時: /hoge/{idPath}/, 削除時: /hoge/{idPath}/delete
-# - 予約Data[data] -
-# updateFlag: 更新モードの時はtrue
-# updating: 処理中の時はtrue
-# item: 登録/更新情報
-# - 拡張メソッド[methods] -
-# showRegister: 登録モードで表示します
-# initRegister: 登録モードで表示する際の初期化処理
-# showUpdate: 変更モードで表示します
-# initUpdate: 変更モードで表示する際の初期化処理(@item未設定)
-# layoutUpdate: 変更モードで表示する際のレイアウト処理(@item設定済)
-# register: 登録/変更します
-# registerData: 登録/変更情報をハッシュで生成します
-# registerPath: 登録先パスを生成します
-# updatePath: 変更先パスを生成します
-# deletePath: 削除先パスを生成します
-# actionSuccess: 成功時のイベント処理
-# actionSuccessMessage: 登録/変更/削除時の表示文言
-# actionSuccessAfter: 成功時のイベント後処理
-# actionFailure: 失敗時のイベント処理
-# actionFailureAfter: 失敗時のイベント処理
-*/
+ * 特定情報の登録/変更/削除を前提としたOptionビルダークラス
+ * 情報に対するCRUD目的のパネルで利用してください。
+ * メソッド定義は「function」を明記する記法で行ってください。(メソッド内部では「() =>」を用いた記法も利用可)
+ * 本クラスを利用する際は初期化時に以下の設定が必要です。
+ * ・path属性の定義
+ * ・createdメソッド内でinitializedを呼び出す
+ * また利用する際は登録時にshowRegister。変更/削除時にshowUpdateを呼び出すようにしてください。
+ * ---
+ * - 拡張属性[ext] -
+ * popup: ポップアップパネルの時はtrue
+ * flattenItem: 更新時に与えたitemをflattenItem(ネストさせないオブジェクト化)とするか
+ * el.scrollBody: 例外発生時にスクロール制御する際の親el(未指定時は.panel-body)
+ * - グローバル属性 -
+ * path: CRUD-API基準パス(必須)。
+ *   pathが「/hoge/」の時。 登録時: /hoge/, 更新時: /hoge/{idPath}/, 削除時: /hoge/{idPath}/delete
+ * - 予約Data[data] -
+ * updateFlag: 更新モードの時はtrue
+ * updating: 処理中の時はtrue
+ * item: 登録/更新情報
+ * - 拡張メソッド[methods] -
+ * showRegister: 登録モードで表示します
+ * initRegister: 登録モードで表示する際の初期化処理
+ * showUpdate: 変更モードで表示します
+ * initUpdate: 変更モードで表示する際の初期化処理(@item未設定)
+ * layoutUpdate: 変更モードで表示する際のレイアウト処理(@item設定済)
+ * register: 登録/変更します
+ * registerData: 登録/変更情報をハッシュで生成します
+ * registerPath: 登録先パスを生成します
+ * updatePath: 変更先パスを生成します
+ * deletePath: 削除先パスを生成します
+ * actionSuccess: 成功時のイベント処理
+ * actionSuccessMessage: 登録/変更/削除時の表示文言
+ * actionSuccessAfter: 成功時のイベント後処理
+ * actionFailure: 失敗時のイベント処理
+ * actionFailureAfter: 失敗時のイベント処理
+ */
 export class PanelCrudBuilder extends ComponentBuilder {
   constructor(options) {
     super(options)
