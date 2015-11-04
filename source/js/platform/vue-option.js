@@ -9,33 +9,33 @@ import * as Lib from "platform/plain"
 import {Event, Action, Style} from 'platform/vue-constants'
 
 /**
-　* Vue向けOptionビルダークラス
-　* ファイルアップロードや確認ダイアログ/単純表示等、シンプルな処理が必要なときは
-　* 本インスタンスのbuild実行戻り値(optionハッシュ)を元にVue.jsオブジェクトを作成してください。
-　* 作成方式は通常のVue.jsと同様です。(new Vue / Vue.extend / Vue.component)
-　* メソッド定義は「function」を明記する記法で行ってください。(メソッド内部では「() =>」を用いた記法も利用可)
-　* 本クラスを利用する際は初期化時に以下の設定が必要です。
-　* ・createdメソッド内でinitializedを呼び出す
-　* ---
-　* - 拡張属性[attributes] -
-　* el.scrollBody: 例外発生時にスクロール制御する際の親el(未指定時は.panel-body)
-　* - 標準API
-　* show: パネルを表示する
-　* hide: パネルを非表示にする
-　* clear: グローバルエラー及び/コントロールエラーを初期化する
-　* scrollTop: スクロール位置を最上位へ移動する
-　* changeFlag: 指定要素(dataに対するパス)を反転した値にする(booleanを想定)
-　* apiGet: APIへのGET処理を行う
-　* apiPost: APIへのPOST処理を行う
-　* apiUpload: APIへのファイルアップロード処理(POST)を行う
-　* apiUrl: APIプリフィックスを付与したURLを返す
-　* apiFailure: API実行時の標準例外ハンドリング
-　* file: type=fileの値参照を返す。apiUploadのdata値へ設定する際に利用
-　* files: type=fileの値参照一覧を返す。
-　* flattenItem: 引数に与えたハッシュオブジェクトを結合文字列へ変換する
-　* paramArray:　配列(オブジェクト)をフラットなパラメタ要素へ展開
-　* renderWarning: 例外情報を画面へ反映する
-　* renderColumnWarning: コントロール単位の画面例外反映
+ * Vue向けOptionビルダークラス
+ * ファイルアップロードや確認ダイアログ/単純表示等、シンプルな処理が必要なときは
+ * 本インスタンスのbuild実行戻り値(optionハッシュ)を元にVue.jsオブジェクトを作成してください。
+ * 作成方式は通常のVue.jsと同様です。(new Vue / Vue.extend / Vue.component)
+ * メソッド定義は「function」を明記する記法で行ってください。(メソッド内部では「() =>」を用いた記法も利用可)
+ * 本クラスを利用する際は初期化時に以下の設定が必要です。
+ * ・createdメソッド内でinitializedを呼び出す
+ * ---
+ * - 拡張属性[attributes] -
+ * el.scrollBody: 例外発生時にスクロール制御する際の親el(未指定時は.panel-body)
+ * - 標準API
+ * show: パネルを表示する
+ * hide: パネルを非表示にする
+ * clear: グローバルエラー及び/コントロールエラーを初期化する
+ * scrollTop: スクロール位置を最上位へ移動する
+ * changeFlag: 指定要素(dataに対するパス)を反転した値にする(booleanを想定)
+ * apiGet: APIへのGET処理を行う
+ * apiPost: APIへのPOST処理を行う
+ * apiUpload: APIへのファイルアップロード処理(POST)を行う
+ * apiUrl: APIプリフィックスを付与したURLを返す
+ * apiFailure: API実行時の標準例外ハンドリング
+ * file: type=fileの値参照を返す。apiUploadのdata値へ設定する際に利用
+ * files: type=fileの値参照一覧を返す。
+ * flattenItem: 引数に与えたハッシュオブジェクトを結合文字列へ変換する
+ * paramArray:　配列(オブジェクト)をフラットなパラメタ要素へ展開
+ * renderWarning: 例外情報を画面へ反映する
+ * renderColumnWarning: コントロール単位の画面例外反映
  */
 export class ComponentBuilder {
   // 初期化コンストラクタ
@@ -268,7 +268,10 @@ export class PanelListBuilder extends ComponentBuilder {
     return {
       initialSearch: true,
       paging: false,
-      el: { scrollBody: '.panel-body' }
+      el: { 
+        scrollBody: '.panel-body',
+        pagingBody: '.l-list-body'
+      }
     }
   }
   // 初期化時のdata情報
@@ -289,7 +292,7 @@ export class PanelListBuilder extends ComponentBuilder {
     initialized: function() {
       // イベント登録
       if (this.ext().paging) {
-        this.$panels.body.onBottom(() => this.next())
+        $(this.ext().el.pagingBody).onBottom(() => this.next())
       }
       // 初期化
       if (this.ext().initialSearch) this.search()
@@ -326,12 +329,12 @@ export class PanelListBuilder extends ComponentBuilder {
       Lib.Log.debug(`- search url: ${this.apiUrl(this.searchPath())}`)
       let param = this.searchData()
       if (0 < Object.keys(param).length) Lib.Log.debug(param)
-      if (this.ext().paging) {
-        param["page.page"] = this.page.page
-      }
       if (append === false) {
         this.clear()
         if (this.page) this.page.page = 1
+      }
+      if (this.ext().paging) {
+        param["page.page"] = this.page.page
       }
       this.updating = true
       let success = (data) => {
