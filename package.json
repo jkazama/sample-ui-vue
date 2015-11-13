@@ -1,6 +1,6 @@
 {
   "name": "sample-ui-vue",
-  "version": "0.5.1",
+  "version": "0.5.3",
   "description": "Vue.js Boilerplate",
   "main": "source/js/main.js",
   "scripts": {
