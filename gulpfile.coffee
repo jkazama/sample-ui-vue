@@ -99,13 +99,14 @@ gulp.task "build:webpack", ->
         new webpack.optimize.DedupePlugin()
       ]
   gulp.src([resource.src.webpack.babel, resource.src.webpack.vue])
+    .pipe($.plumber())
     .pipe(webpackStream({
       entry: "#{paths.src.js}/main.js"
       output: {filename: "bundler.js"}
       watch: !production
       module:
         loaders: [
-          {test: /\.js$/, loader: "babel?blacklist[]=regenerator"}
+          {test: /\.js$/, loader: "babel?optional[]=runtime"}
           {test: /\.vue$/, loader: "vue"}
         ]
       resolve:
