@@ -116,7 +116,7 @@ gulp.task('build:webpack', () => {
       watch: !production,
       module: {
         loaders: [
-          {test: /\.js$/, loader: 'babel?optional[]=runtime'},
+          {test: /\.js$/, loader: 'babel'},
           {test: /\.vue$/, loader: 'vue'}
         ]
       },
@@ -181,7 +181,7 @@ gulp.task('revision:clean', () => {
 })
 
 gulp.task('revision:append', () => {
-  revAll = new RevAll({dontRenameFile: [/^\/favicon.ico$/g, '.html']})
+  let revAll = new RevAll({dontRenameFile: [/^\/favicon.ico$/g, '.html']})
   gulp.src(`${paths.dist.root}/**/*`)
     .pipe(revAll.revision())
     .pipe(gulp.dest(root.tmp))
