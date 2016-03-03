@@ -112,7 +112,7 @@ source
 | `vue`                     | 1.0.+    | アプリケーションの MVVM 機能を提供 |
 | `vue-router`              | 0.7.+    | Vue.js の SPA ルーティングサポート |
 | `jquery`                  | 2.1.+    | DOM 操作サポート |
-| `lodash`                  | 4.6.+   | 汎用ユーティリティライブラリ |
+| `lodash`                  | 3.10.+   | 汎用ユーティリティライブラリ |
 | `moment`                  | 2.11.+   | 日時ライブラリ |
 | `bootstrap-sass-official` | 3.3.+    | CSS フレームワーク |
 | `bootstrap-datepicker`    | 1.4.+    | 日時入力ライブラリ |
