@@ -3,13 +3,13 @@ sample-ui-vue
 
 ### はじめに
 
-[BootStrap](http://getbootstrap.com/) / [Vue.js](http://jp.vuejs.org/) を元にしたプロジェクトWebリソース(HTML/CSS/JS)です。SPA(Single Page Application)モデルを前提としています。  
+[BootStrap](http://getbootstrap.com/) / [Vue.js](http://jp.vuejs.org/) を元にしたプロジェクト Web リソース ( HTML / CSS / JS ) です。 SPA ( Single Page Application ) モデルを前提としています。  
 
-サンプル確認用のAPIサーバとして[sample-boot-hibernate](https://github.com/jkazama/sample-boot-hibernate)を期待します。
+サンプル確認用の API サーバとして [sample-boot-hibernate](https://github.com/jkazama/sample-boot-hibernate) を期待します。
 
 `※ライブラリではなく上記ライブラリを用いた単純な実装サンプルです。`
 
-#### ビルド/テスト稼働環境構築
+#### ビルド / テスト稼働環境構築
 
 ビルドは [Node.js](http://nodejs.jp/) + [Webpack](https://webpack.github.io/) + [Gulp](http://gulpjs.com/) で行います。以下の手順でインストールしてください。
 
@@ -65,11 +65,10 @@ sample-ui-vue
 
 ### ポリシー
 
-- JS / CSS の外部ライブラリは bower で管理する
-    - グローバルスコープの汚染を許容する
+- JS / CSS の外部ライブラリは npm で管理する
+    - jQuery や Bootstrap 等、グローバルスコープの汚染を許容するものはビルド済みリソースをそのまま流用する
 - プロジェクト固有の JS は Webpack を利用して生成する
     - グローバルスコープの汚染を許容せずにモジュールベースで開発する
-    - 外部ライブラリのアクセスは従来通りグローバルな名前空間を用いる
 - [React.js版](https://github.com/jkazama/sample-ui-react) と異なり、 DOM 表示後の操作を中心とした従来型の実装方式
     - コンポーネント粒度は粗めでなるべく素の HTML を触れるように
     - 上記前提のため、 jQuery を用いた DOM 操作も許容
@@ -79,17 +78,16 @@ sample-ui-vue
 ディレクトリ構成については以下を参照してください。
 
 ```
-bower.json                           … bower が利用するライブラリ定義
-gulpfile.coffee                      … gulp 実行時に利用されるビルドファイル
-package.json                         … node.js が gulp 実行時に利用するライブラリ定義
+gulpfile.babel.js                    … gulp 実行時に利用されるビルドファイル
+package.json                         … npm 関連定義
 public                               … 配布公開リソース ( 自動生成 )
   css                                … CSS
     - style.css                      … source / css 直下のリソース
-    - vendor.css                     … bower 経由の外部 CSS ライブラリ
+    - vendor.css                     … ビルド済み外部 CSS ライブラリ
   fonts                              … アイコンフォント
   js                                 … JavaScript ( ES5 )
     - bundler.js                     … source / js 直下のリソース ( Webpack で生成 )
-    - vendor.js                      … Bower 経由の外部JSライブラリ
+    - vendor.js                      … ビルド済み外部JSライブラリ
   index.html
 source
   css                                … CSS テンプレートファイル ( SCSS )
@@ -112,7 +110,7 @@ source
 | `vue`                     | 1.0.+    | アプリケーションの MVVM 機能を提供 |
 | `vue-router`              | 0.7.+    | Vue.js の SPA ルーティングサポート |
 | `jquery`                  | 2.1.+    | DOM 操作サポート |
-| `lodash`                  | 3.10.+   | 汎用ユーティリティライブラリ |
+| `lodash`                  | 4.6.+    | 汎用ユーティリティライブラリ |
 | `moment`                  | 2.11.+   | 日時ライブラリ |
 | `bootstrap-sass-official` | 3.3.+    | CSS フレームワーク |
 | `bootstrap-datepicker`    | 1.4.+    | 日時入力ライブラリ |

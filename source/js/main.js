@@ -17,7 +17,7 @@ directive()
 // Vue Routing
 import routes from "routes"
 
-let router = new VueRouter()
+const router = new VueRouter()
 router.map(routes)
 
 // Applicaiton Initialize
