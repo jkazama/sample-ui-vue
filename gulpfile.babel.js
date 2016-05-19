@@ -99,13 +99,13 @@ gulp.task('build:webpack', () => {
   gulp.src([resource.src.webpack.babel, resource.src.webpack.vue])
     .pipe($.plumber())
     .pipe(webpackStream({
-      entry: `${paths.src.js}/main.js`,
+      entry: [`${paths.src.js}/main.js`],
       output: {filename: 'bundler.js'},
       watch: !production,
       module: {
         loaders: [
-          {test: /\.js$/, loader: 'babel'},
-          {test: /\.vue$/, loader: 'vue'}
+          {test: /\.js$/, loader: 'babel', exclude: /node_modules/},
+          {test: /\.vue$/, loader: 'vue', exclude: /node_modules/}
         ]
       },
       resolve: {
@@ -115,7 +115,7 @@ gulp.task('build:webpack', () => {
       plugins: plugins
      }, webpack))
     .pipe(gulp.dest(paths.dist.js))
-    .pipe(browserSync.stream())  
+    .pipe(browserSync.stream())
 })
 
 // compile Jade -> HTML
@@ -145,7 +145,7 @@ gulp.task('build:static', () => {
   const libcss = resource.vendor.css
   gulp.src(Object.keys(libcss).map((key) => libcss[key]))
     .pipe($.concat("vendor.css"))
-    .pipe($.if(production, $.uglify()))
+    .pipe($.if(production, $.cssmin()))
     .pipe(gulp.dest(paths.dist.css))
   const libjs = resource.vendor.js
   gulp.src(Object.keys(libjs).map((key) => libjs[key]))
