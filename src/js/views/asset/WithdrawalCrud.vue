@@ -1,6 +1,6 @@
 <style lang="sass"></style>
 
-<template lang="jade">
+<template lang="pug">
 .l-withdrawal-crud
   div(v-message="global")
   .row.l-row

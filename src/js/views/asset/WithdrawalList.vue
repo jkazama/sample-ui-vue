@@ -1,6 +1,6 @@
 <style lang="sass"></style>
 
-<template lang="jade">
+<template lang="pug">
 .l-withdrawal-list
   div(v-message="global")
   .row

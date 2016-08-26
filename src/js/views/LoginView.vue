@@ -1,16 +1,15 @@
 <style lang="sass"></style>
 
-<template lang="jade">
+<template lang="pug">
   .container
     .col-xs-6.col-xs-offset-3
       .panel.panel-default.l-panel-login
         .panel-heading ログインフォーム
         .panel-body
-          div(v-message="global")
           input.form-control.l-row(type="text" placeholder="ログインID" v-model="loginId" @keydown.enter="login")
           input.form-control(type="password" placeholder="パスワード" v-model="password" @keydown.enter="login")
         .panel-footer
-          button.btn.btn-block.btn-primary(@click="login" v-disable:spinner="updating")
+          button.btn.btn-block.btn-primary(@click="login")
             i.fa.fa-fwfa-lg.fa-sign-in
             | 　ログイン
       .alert.alert-warning サーバ側（サンプル実装版）の認証モードを有効にした時は sample/sample でログインしてください。
@@ -19,22 +18,19 @@
 <script lang="babel">
 import {Level} from "constants"
 import * as Lib from "platform/plain"
-import * as Option from "platform/vue-option"
-export default new Option.ComponentBuilder({
-  el: ".l-panel-login",
-  data: {
-    loginId: "",
-    password: "",
-    updating: false
-  },
-  created: function() {
-    this.initialized()
-    if (this.isLogin()) {
-      this.$route.router.go("/")
+import ViewBasic from "views/mixins/view-basic"
+export default {
+  name: 'login-view',
+  mixins: [ViewBasic],
+  data() {
+    return {
+      loginId: "",
+      password: "",
+      updating: false
     }
   },
   methods: {
-    login: function() {
+    login() {
       Lib.Log.debug(this.loginId)
       this.updating = true
       let success = (ret) => {
@@ -54,12 +50,12 @@ export default new Option.ComponentBuilder({
       }
       this.apiPost("/login", {loginId: this.loginId, password: this.password}, success, failure)
     },
-    forward: function() {
+    forward() {
       this.apiGet("/account/loginAccount", {}, (v) => {
         this.loginSession(v)
         location.href = "index.html"
       })
-    }
+    }    
   }
-}).build()
+}
 </script>

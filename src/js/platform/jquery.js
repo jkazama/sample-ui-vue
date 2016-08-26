@@ -3,6 +3,8 @@
  JQueryライブラリの拡張実装
 ----------------------------------*/
 
+import $ from 'jquery'
+
 export default function() {
   // 対象となるコントロールを無効化します
   $.fn.enable = function() { this.attr("disabled", false) }

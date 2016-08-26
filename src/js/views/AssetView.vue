@@ -12,7 +12,7 @@
 }
 </style>
 
-<template lang="jade">
+<template lang="pug">
 .container-fluid
   .row
     .col-md-4
