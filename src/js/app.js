@@ -9,19 +9,24 @@
 import jquery from 'platform/jquery'
 jquery()
 
-// Vue
+// Vue / Vue Routing
 import Vue from 'vue'
-import App from 'App.vue'
 import router from './router'
-import * as filters from './filters'
-import directives from './directives'
-directives()
 
+// Register Global Event
+window.EventEmitter = new Vue()
+
+// Vue Custom Filter
+import * as filters from './filters'
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
 
-// Application Vue Initialize
+import directives from './directives'
+directives()
+
+// Application Initialize
+import App from 'App.vue'
 new Vue({
   router,
   template: '<App />',

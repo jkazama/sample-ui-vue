@@ -3,6 +3,8 @@ import {Level, Event, Action, Style} from 'constants'
 import * as Lib from "platform/plain"
 import $ from "jquery"
 
+import Message from "components/Message.vue"
+
 /**
  * View コンポーネントのベーシックな Mixin。
  * ファイルアップロードや確認ダイアログ/単純表示等、シンプルな処理が必要なときなどに利用してください
@@ -32,9 +34,10 @@ import $ from "jquery"
  */
 export default {
   data() {
-    return {
-      global: ""
-    }
+    return {}
+  },
+  components: {
+    "message": Message
   },
   created() {
     this.clear()
@@ -46,31 +49,21 @@ export default {
     $columnMessage(key) {
       return $(this.$el).find(`${Style.MessagePrefix}${key.replace('.', '-')}`)
     },
-    // パネルを表示します
-    show(speed = 100) {
-      this.clearMessage()
-      $(this.$el).show(speed)
-      this.scrollTop()
-    },
-    // パネルを隠します
-    hide() {
-      $(this.$el).hide()
-    },
     // メッセージを通知します。
     message(globalMessage = null, columnMessages = [], level = Level.INFO) {
       let messages = {global: globalMessage, columns: columnMessages, level: level}
       if (globalMessage) Lib.Log.debug(messages)
-      this.$emit(Event.Messages, messages)
+      EventEmitter.$emit(Event.Messages, messages)
     },
     // エラーメッセージを通知します。
     messageError(globalMessage, columnMessages = [], level = Level.ERROR) {
       this.message(globalMessage, columnMessages, level)
       // 例外発生箇所へ移動
-      if (!columnMessages || columnMessages.length === 0) {
-        this.scrollTop()
-      } else {
-        this.scrollTo(this.ext().el.scrollBody, Object.keys(columnMessages)[0])
-      }
+      // if (!columnMessages || columnMessages.length === 0) {
+      //   this.scrollTop()
+      // } else {
+      //   this.scrollTo(this.ext().el.scrollBody, Object.keys(columnMessages)[0])
+      // }
     },
     // グローバルエラー及び/コントロールエラーを初期化します
     clear() {

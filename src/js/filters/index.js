@@ -1,9 +1,13 @@
 /*----------------------------------
  Vue.jsのカスタムフィルタ定義
  カスタムフィルタは「v-text」などで変数を表示する際に値のフォーマッティングなどを可能にします。
- 例: <span v-text="createDay | day">
- 参考: http://jp.vuejs.org/guide/custom-filter.html
+ 例: {{createDay | day}}
+ 参考:
+ http://jp.vuejs.org/guide/custom-filter.html
+ https://github.com/vuejs/vue/issues/2756
 ----------------------------------*/
+
+import moment from "moment"
 
 // # Text Filter
 

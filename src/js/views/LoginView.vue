@@ -2,6 +2,7 @@
 
 <template lang="pug">
   .container
+    message(global=true)
     .col-xs-6.col-xs-offset-3
       .panel.panel-default.l-panel-login
         .panel-heading ログインフォーム
@@ -53,7 +54,7 @@ export default {
     forward() {
       this.apiGet("/account/loginAccount", {}, (v) => {
         this.loginSession(v)
-        location.href = "index.html"
+        this.$router.push("/")
       })
     }    
   }

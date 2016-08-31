@@ -29,47 +29,41 @@
 </template>
 
 <script lang="babel">
-// import Param from 'variables'
-// import * as Lib from 'platform/plain'
-// import * as Option from "platform/vue-option"
-// ヘッダパネル
+import Param from 'variables'
+import * as Lib from 'platform/plain'
+import ViewBasic from "views/mixins/view-basic"
 export default {
-  name: 'app',
+  name: 'app-view',
+  mixins: [ViewBasic],
   data() {
     return {
-      logined: true
+      logined: false
+    }
+  },
+  methods: {
+    checkLogin(route, redirect, next) {
+      let success = (v) => {
+        this.logined = true
+        next()
+      }
+      let failure = (err) => {
+        Lib.Log.debug('ログイン情報を確認できませんでした')
+        let current = this.logined // 事前ログイン状態に応じて表示ページを変更
+        this.logoutLocal()
+        current ? redirect('/timeout') : redirect('/login')
+      }
+      this.apiGet('/account/loginStatus', {}, success, failure)
+    },
+    logout() {
+      this.logoutLocal()
+      this.apiPost('/logout', {}, ((v) => true), ((e)=> false))
+      this.$router.push('/login')
+    },
+    logoutLocal() {
+      this.logined = false
+      Lib.Log.debug('ログアウトしました')
+      this.logoutSession()
     }
   }
 }
-// export default new Option.ComponentBuilder({
-//   data: {
-//     logined: false
-//   },
-//   created: function() {
-//     this.initialized()
-//     this.checkLogin(() => this.logined = true)
-//   },
-//   methods: {
-//     checkLogin: function(success) {
-//       let failure = (err) => {
-//         Lib.Log.debug('ログイン情報を確認できませんでした')
-//         this.logined = false
-//         if (this.sessionValue()) {
-//           this.logoutSession()
-//           this.$route.router.go("/timeout")
-//         } else {
-//           this.$route.router.go("/login")
-//         }
-//       }
-//       Lib.Ajax.get(`${Param.Api.root}/account/loginStatus`, {}, success, failure)
-//     },
-//     logout: function(e) {
-//       this.logined = false
-//       this.logoutSession()
-//       this.apiPost('/logout', {}, ((v) => true), ((e)=> false))
-//       Lib.Log.debug('ログアウトしました')
-//       this.$route.router.go("/login")
-//     }
-//   }
-// }).build()
 </script>
