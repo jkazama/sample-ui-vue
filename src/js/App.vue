@@ -1,5 +1,3 @@
-<style lang="sass"></style>
-
 <template lang="pug">
   .l-container-main
     nav.navbar.navbar-default.navbar-static-top.l-nav-header(v-if="logined")

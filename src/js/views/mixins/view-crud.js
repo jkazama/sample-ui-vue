@@ -1,25 +1,18 @@
 import Param from 'variables'
 import {Level, Event, Action} from 'constants'
 import * as Lib from 'platform/plain'
-import $ from 'jquery'
 import Vue from 'vue'
 
 import ViewBasic from 'views/mixins/view-basic'
 
 /**
- * 特定情報の登録/変更/削除を前提としたOptionビルダークラス
+ * 特定情報の登録/変更/削除を前提とした Vue Mixin。
  * 情報に対するCRUD目的のパネルで利用してください。
- * メソッド定義は「function」を明記する記法で行ってください。(メソッド内部では「() =>」を用いた記法も利用可)
  * 本クラスを利用する際は初期化時に以下の設定が必要です。
  * ・path属性の定義
- * ・createdメソッド内でinitializedを呼び出す
- * また利用する際は登録時にshowRegister。変更/削除時にshowUpdateを呼び出すようにしてください。
  * ---
  * - 拡張属性[ext] -
- * popup: ポップアップパネルの時はtrue
  * autoFlattenItem: 更新時に与えたitemをflattenItem(ネストさせないオブジェクト化)とするか
- * el.scrollBody: 例外発生時にスクロール制御する際の親el(未指定時は.panel-body)
- * - グローバル属性 -
  * path: CRUD-API基準パス(必須)。
  *   pathが「/hoge/」の時。 登録時: /hoge/, 更新時: /hoge/{idPath}/, 削除時: /hoge/{idPath}/delete
  * - 予約Data[data] -
@@ -27,11 +20,6 @@ import ViewBasic from 'views/mixins/view-basic'
  * updating: 処理中の時はtrue
  * item: 登録/更新情報
  * - 拡張メソッド[methods] -
- * showRegister: 登録モードで表示します
- * initRegister: 登録モードで表示する際の初期化処理
- * showUpdate: 変更モードで表示します
- * initUpdate: 変更モードで表示する際の初期化処理(@item未設定)
- * layoutUpdate: 変更モードで表示する際のレイアウト処理(@item設定済)
  * register: 登録/変更します
  * registerData: 登録/変更情報をハッシュで生成します
  * registerPath: 登録先パスを生成します
@@ -39,20 +27,17 @@ import ViewBasic from 'views/mixins/view-basic'
  * deletePath: 削除先パスを生成します
  * actionSuccess: 成功時のイベント処理
  * actionSuccessMessage: 登録/変更/削除時の表示文言
- * actionSuccessAfter: 成功時のイベント後処理
  * actionFailure: 失敗時のイベント処理
- * actionFailureAfter: 失敗時のイベント処理
  */
 export default {
   data() {
     return {
       item: {},          // 更新対象情報
-      updateFlag: false, // 更新モードの時はtrue
       updating: false    // 処理中判定
     }
   },
   props: {
-    popup: {type: Boolean, default: false},
+    updateFlag: {type: Boolean, default: false},
     autoFlattenItem: {type: Boolean, default: false},
     path: {type: String, required: true}
   },
@@ -110,35 +95,6 @@ export default {
       this.clearMessage()
       Object.keys(this.item).forEach((k) => this.item[k] = null)
     },
-    // 登録モードで自身を表示します
-    showRegister() {
-      this.hide()
-      this.updateFlag = false
-      this.clear()
-      this.initRegister()
-      this.show()
-      Lib.Log.debug('show register')
-    },
-    // 登録モードで表示する際の初期化処理を行います
-    initRegister() { /* 必要に応じて同名のメソッドで拡張実装してください */ },
-    // 変更モードで自身を表示します
-    showUpdate(item) {
-      this.hide()
-      this.updateFlag = true
-      this.clear()
-      let v = _.clone(item)
-      this.initUpdate(v)
-      this.item = this.autoFlattenItem === true ? this.flattenItem(v) : v
-      this.layoutUpdate()
-      this.show()
-      Lib.Log.debug(`show update [${this.$el ? this.$el.className : "unknown"}]`)
-    },
-    // 変更モードで表示する際の初期化処理を行います(this.item未設定)
-    // itemバインドがまだされていない点に注意してください。itemバインド後の処理が必要な時は
-    // layoutUpdateを実装してください。
-    initUpdate(item) { /* 必要に応じて同名のメソッドで拡張実装してください */ },
-    // 変更モードで表示する際のレイアウト処理を行います(this.item設定済)
-    layoutUpdate(item) { /* 必要に応じて同名のメソッドで拡張実装してください */ },
     // 登録時のURLパスを返します。ここで返すURLパスはapiUrlの引数に設定されます。
     registerPath(item) { return this.path },
     // 更新時のURLパスを返します。ここで返すURLパスはapiUrlの引数に設定されます。
@@ -161,27 +117,16 @@ export default {
     // 登録/変更/削除時の成功処理を行います。
     actionSuccess(v) {
       EventEmitter.$emit(Action.CrudSuccess, v)
-      if (this.popup) {
-        this.clear()
-        this.hide()
-      } else {
-        if (this.updateFlag === false) this.clear()
-        //this.scrollTop()
-        this.message(this.actionSuccessMessage())
-      }
+      if (this.updateFlag === false) this.clear()
+      this.message(this.actionSuccessMessage())
       Lib.Log.debug('success')
-      this.actionSuccessAfter(v)
     },
     // 登録/変更/削除時の表示文言を返します。
     actionSuccessMessage() { return this.updateFlag ? '変更(削除)を完了しました' : '登録を完了しました' },
-    // 登録/変更/削除時の成功後処理を行います。
-    actionSuccessAfter(v) { /* 必要に応じて同名のメソッドで拡張実装してください */ },
     // 登録/変更/削除時の失敗処理を行います。
     actionFailure(xhr) {
       this.apiFailure(xhr)
-      this.actionFailureAfter(xhr)
-    },
-    // 登録/変更/削除時の失敗後処理を行います。
-    actionFailureAfter(xhr) { /* 必要に応じて同名のメソッドで拡張実装してください */ }
+      EventEmitter.$emit(Action.CrudFailure, v)
+    }
   }
 }

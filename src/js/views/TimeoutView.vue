@@ -1,5 +1,3 @@
-<style lang="sass"></style>
-
 <template lang="pug">
 .col-xs-6.col-xs-offset-3
   .panel.panel-default

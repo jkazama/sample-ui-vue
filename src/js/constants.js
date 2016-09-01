@@ -14,12 +14,16 @@ export const Level = {
 
 // イベント定数
 export const Event = {
-  Messages: "vue-event-messages"
+  Messages: "vue-event-messages",
+  Login: 'vue-event-login',
+  Logout: 'vue-event-logout'
 }
 
 // 実行アクション定数
 export const Action = {
-  CrudSuccess: 'vue-action-crud-success'
+  SearchSuccess: 'vue-action-search-success',
+  CrudSuccess: 'vue-action-crud-success',
+  CrudFailure: 'vue-action-crud-failure'
 }
 
 // DOM操作で利用されるクエリセレクタ定数

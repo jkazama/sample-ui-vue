@@ -1,5 +1,3 @@
-<style lang="sass"></style>
-
 <template lang="pug">
 .container
   .alert.alert-warning.l-center 取引情報作成中

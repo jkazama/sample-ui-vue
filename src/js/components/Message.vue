@@ -1,12 +1,26 @@
-<style lang="sass"></style>
+<style lang="sass">
+.l-message-group {
+  display: block;
+  input, textarea, select {
+    border-color: #ed4c4c;
+    background-color: #f6e3e3;
+  }
+  .l-message-group-item {
+    font-size: 80%;
+    padding: .2em;
+    margin-bottom: .2em;
+  }
+}
+</style>
 
 <template lang="pug">
 div
   div(v-if="global")
-    .alert(v-bind:class="[classAlert, classText]" v-text="message" v-if="message")
+    .alert(:class="[classAlert, classText]" v-text="message" v-if="message")
   div(v-if="!global")
-    .input-group.l-message-group(v-if="message")
-      .l-message-group-item.text-danger(v-text="message")
+    .input-group(:class="{'l-message-group': message}")
+      slot
+      .l-message-group-item.text-danger(v-text="message" v-if="message")
 </template>
 
 <script lang="babel">

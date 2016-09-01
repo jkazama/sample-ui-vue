@@ -2,9 +2,6 @@
 .tab-pane {
   padding: 10px 0;
 }
-.l-list-body {
-  height: 210px;
-}
 .l-panel-asset-info {
   .panel-body {
     height: 300px;
@@ -30,8 +27,8 @@
         .tab-pane#deposit
           |　TBD
         .tab-pane#withdrawal.active
-          WithdrawalCrud
-          WithdrawalList
+          WithdrawalCrud(ref="crud")
+          WithdrawalList(ref="list")
         .tab-pane#cashflow
           |　TBD
   hr
@@ -57,7 +54,7 @@ export default {
     "WithdrawalList": WithdrawalList
   },
   mounted() {
-    EventEmitter.$on(Action.CrudSuccess, (v) => this.$children[1].search())
+    EventEmitter.$on(Action.CrudSuccess, (v) => this.$refs.list.search())
   }
 }
 </script>

@@ -1,8 +1,6 @@
-<style lang="sass"></style>
-
 <template lang="pug">
   .container
-    message(global=true)
+    Message(global=true)
     .col-xs-6.col-xs-offset-3
       .panel.panel-default.l-panel-login
         .panel-heading ログインフォーム
