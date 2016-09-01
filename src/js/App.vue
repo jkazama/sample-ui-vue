@@ -27,7 +27,6 @@
 </template>
 
 <script lang="babel">
-import Param from 'variables'
 import * as Lib from 'platform/plain'
 import ViewBasic from "views/mixins/view-basic"
 export default {

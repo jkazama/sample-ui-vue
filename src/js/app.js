@@ -20,7 +20,7 @@ Object.keys(filters).forEach(key => {
 import App from 'App.vue'
 new Vue({
   router,
-  template: '<App />',
+  template: '<App ref="app" />',
   components: {
     'App': App
   }

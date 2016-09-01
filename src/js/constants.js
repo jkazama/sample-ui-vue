@@ -4,7 +4,8 @@
 ----------------------------------*/
 
 // Enum
-// Logging Levels
+
+// ログレベル定数
 export const Level = {
   DEBUG: 10,
   INFO: 20,
@@ -24,11 +25,4 @@ export const Action = {
   SearchSuccess: 'vue-action-search-success',
   CrudSuccess: 'vue-action-crud-success',
   CrudFailure: 'vue-action-crud-failure'
-}
-
-// DOM操作で利用されるクエリセレクタ定数
-export const Style = {
-  MessagePrefix: '.l-message-',
-  ColumnPrefix: '.l-column-',
-  DefaultScrollTop: '.panel-body'
 }

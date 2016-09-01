@@ -18,7 +18,7 @@ div
   div(v-if="global")
     .alert(:class="[classAlert, classText]" v-text="message" v-if="message")
   div(v-if="!global")
-    .input-group(:class="{'l-message-group': message}")
+    div(:class="{'input-group': message, 'l-message-group': message}")
       slot
       .l-message-group-item.text-danger(v-text="message" v-if="message")
 </template>

@@ -91,24 +91,3 @@ export function quantity(v) {
 export function rate(v) {
   return v ? `${v} %` : ''
 }
-
-// # Options Filter
-  
-/**
- * selectのoptionsへ設定するオブジェクト一覧を生成します。
- * 通常のオブジェクト一覧をtext/valueを保持するオブジェクト一覧へ変換します。
- * ---
- * list - key/value変換対象オブジェクト一覧
- * defaultLabel - 指定時は値が空のラベル要素を追加します
- * valueField - 指定したオブジェクトのvalueへバインドするフィールド名
- * textField - 指定したオブジェクトのtextへバインドするフィールド名(未指定時はvalueFieldの値)
- * defaultLabel - valueFieldの値が未設定時の文言
- */
-export function extract(v, valueField, textField = null, defaultLabel = null) {
-  return Array.from(v).map((item) => {
-    let value = item[valueField] ? item[valueField].toString() : item[valueField]
-    let key = textField ? textField : valueField
-    let text = item[key] ? item[key].toString() : item[key]
-    return { value: value, text: (text ? text : (defaultLabel ? defaultLabel : '--'))}
-  })
-}

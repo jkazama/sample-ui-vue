@@ -31,13 +31,13 @@ router.beforeEach((route, redirect, next) => {
   if (route.matched.some(m => m.meta.anonymous)) {
     next()
   } else {
-    if (router.app.$children[0]) {
-      router.app.$children[0].checkLogin(route, redirect, next)
+    if (router.app.$refs.app) {
+      router.app.$refs.app.checkLogin(route, redirect, next)
     } else {　// ページリフレッシュ時にrouter初期化が遅れるケースの対応
       let retry = 0;
       let interval = setInterval(() => {
-        if (router.app.$children[0]) {
-          router.app.$children[0].checkLogin(route, redirect, next)
+        if (router.app.$refs.app) {
+          router.app.$refs.app.checkLogin(route, redirect, next)
           clearInterval(interval)
         } else {
           retry++

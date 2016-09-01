@@ -1,10 +1,10 @@
 <template lang="pug">
 Message(:field="field")
   .input-group(v-if="suffix")
-    input.form-control(type="text", :placeholder="placeholder", :value="value",
+    input.form-control(:type="typeName", :placeholder="placeholder", :value="value",
       @keydown="$emit('input', $event.target.value)", @keydown.enter="onEnter", :disabled="updating")
     span.input-group-addon(v-text="suffix" v-if="suffix")
-  input.form-control(v-if="!suffix", type="text", :placeholder="placeholder", :value="value",
+  input.form-control(v-if="!suffix", :type="typeName", :placeholder="placeholder", :value="value",
       @keydown="$emit('input', $event.target.value)", @keydown.enter="onEnter", :disabled="updating")
 </template>
 
@@ -19,10 +19,16 @@ export default {
     placeholder: {type: String},
     suffix: {type: String, default: null},
     field: {type: String},
+    password: {type: Boolean, default: false},
     updating: {type: Boolean, default: false},
     enter: {type: Function},
     // from v-model
     value: {}
+  },
+  computed: {
+    typeName() {
+      return this.password ? 'password' : 'text'
+    }
   },
   methods: {
     onEnter(event) {

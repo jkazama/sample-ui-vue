@@ -5,10 +5,10 @@
       .panel.panel-default.l-panel-login
         .panel-heading ログインフォーム
         .panel-body
-          input.form-control.l-row(type="text" placeholder="ログインID" v-model="loginId" @keydown.enter="login")
-          input.form-control(type="password" placeholder="パスワード" v-model="password" @keydown.enter="login")
+          InputText.l-row(placeholder="ログインID", v-model="loginId", :enter="login")
+          InputText(placeholder="パスワード", v-model="password", password=true, :enter="login")
         .panel-footer
-          button.btn.btn-block.btn-primary(@click="login")
+          CommandButton.btn-primary(@click.native="login", :updating="updating")
             i.fa.fa-fwfa-lg.fa-sign-in
             | 　ログイン
       .alert.alert-warning サーバ側（サンプル実装版）の認証モードを有効にした時は sample/sample でログインしてください。
