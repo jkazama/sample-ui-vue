@@ -5,14 +5,14 @@ sample-ui-vue
 
 [BootStrap](http://getbootstrap.com/) / [Vue.js](http://jp.vuejs.org/) を元にしたプロジェクト Web リソース ( HTML / CSS / JS ) です。 SPA ( Single Page Application ) モデルを前提としています。  
 
+※ライブラリではなく上記ライブラリを用いた単純な実装サンプルです。
+
 サンプル確認用の API サーバとして以下のいずれかを期待します。
 - [sample-boot-hibernate](https://github.com/jkazama/sample-boot-hibernate)
 - [sample-boot-micro](https://github.com/jkazama/sample-boot-micro)
 - [sample-boot-scala](https://github.com/jkazama/sample-boot-scala)
 - [sample-aspnet-api](https://github.com/jkazama/sample-aspnet-api)
 - [sample-php7-laravel](https://github.com/jkazama/sample-php7-laravel)
-
-※ライブラリではなく上記ライブラリを用いた単純な実装サンプルです。
 
 ---
 従来型のマルチページ実装については [sample-ui-vue-pages](https://github.com/jkazama/sample-ui-vue-pages) 、 Flux 実装については [sample-ui-vue-flux](https://github.com/jkazama/sample-ui-vue-flux) を参照してください。
@@ -61,7 +61,7 @@ sample-ui-vue
 #### 配布用 Web リソースのビルド / リリース
 
 + コンソールで本ディレクトリ直下へ移動し、 「 `gulp build-prod` 」 を実行
-+ `public` ディレクトリ直下に出力されたファイルをリリース先のディレクトリへコピー
++ `dist` ディレクトリ直下に出力されたファイルをリリース先のディレクトリへコピー
 
 ### ポリシー
 
@@ -80,7 +80,7 @@ gulpfile.babel.js                    … gulp 実行時に利用されるビル�
 package.json                         … npm 関連定義
 dist                                 … 配布公開リソース ( 自動生成 )
   css                                … CSS
-    - style.css                      … source / css 直下のリソース
+    - style.css                      … src / css 直下のリソース
   fonts                              … アイコンフォント
   js                                 … JavaScript ( ES5 )
     - bundle.js                      … src / js 直下のリソース
@@ -100,7 +100,7 @@ src
   static                             … 画像等コンパイル不要な静的リソースファイル
 ```
 
-※ gulp コマンドを実行して変更監視を有効にしておくと、 source 配下のリソースを修正した際にリアルタイムで public 直下のファイルが更新されていきます。
+※ gulp コマンドを実行して変更監視を有効にしておくと、 src 配下のリソースを修正した際にリアルタイムで dist 直下のファイルが更新されていきます。
 
 ### 依存ライブラリ
 
