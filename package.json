@@ -1,8 +1,8 @@
 {
   "name": "sample-ui-vue",
   "version": "1.0.0",
-  "description": "Vue.js Boilerplate",
-  "main": "source/js/app.js",
+  "description": "Vue.js / VueRouter Boilerplate",
+  "main": "src/js/app.js",
   "scripts": {
     "start": "gulp",
     "build": "gulp build-prod"

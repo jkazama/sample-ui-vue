@@ -25,6 +25,7 @@ sample-ui-vue
 1. 「 `npm install -g gulp` 」 を実行して Gulp をインストール。
     - Mac ユーザは 「 `sudo npm install -g gulp` 」 で。
 1. コンソールで本ディレクトリ直下へ移動後、 「 `npm install` 」 を実行して Gulp ライブラリをインストール。
+    - node-sass あたりでビルドに失敗した場合は、 「 `npm uninstall node-sass` 」 を実行してから再度試してみてください。
 
 ### 動作確認
 
