@@ -3,8 +3,6 @@
  JS全般で利用される定数
 ----------------------------------*/
 
-// Enum
-
 // ログレベル定数
 export const Level = {
   DEBUG: 10,
@@ -22,7 +20,7 @@ export const Event = {
 
 // 実行アクション定数
 export const Action = {
-  SearchSuccess: 'vue-action-search-success',
-  CrudSuccess: 'vue-action-crud-success',
-  CrudFailure: 'vue-action-crud-failure'
+  Success: 'vue-action-success',
+  Failure: 'vue-action-failure',
+  SearchSuccess: 'vue-action-search-success'
 }

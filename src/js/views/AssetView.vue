@@ -54,7 +54,7 @@ export default {
     "WithdrawalList": WithdrawalList
   },
   mounted() {
-    EventEmitter.$on(Action.CrudSuccess, (v) => this.$refs.list.search())
+    EventEmitter.$on(Action.Success, (v) => this.$refs.list.search())
   }
 }
 </script>

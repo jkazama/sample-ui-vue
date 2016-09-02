@@ -1,3 +1,13 @@
+<!-- 
+- Message.vue -
+エラーメッセージ表示機能を提供する Vue コンポーネント。
+グローバルイベント(Event.Messages)で通知された内容を表示します。
+
+[template]
+Message(global=true)
+Message(field=anyMessageKey)
+  <input type="text" …
+-->
 <style lang="sass">
 .l-message-group {
   display: block;
@@ -35,10 +45,9 @@ export default {
     }
   },
   props: {
-    global: {
-      type: Boolean,
-      default: false
-    },
+    // グローバル例外表示フラグ
+    global: {type: Boolean, default: false},
+    // フィールド例外表示キー (グローバル例外表示フラグが false 時に有効)
     field: {type: String}
   },
   created() {

@@ -11,15 +11,17 @@ import ViewBasic from 'views/mixins/view-basic'
  * 本クラスを利用する際は初期化時に以下の設定が必要です。
  * ・path属性の定義
  * ---
- * - 拡張属性[ext] -
+ * - Props -
  * autoFlattenItem: 更新時に与えたitemをflattenItem(ネストさせないオブジェクト化)とするか
  * path: CRUD-API基準パス(必須)。
  *   pathが「/hoge/」の時。 登録時: /hoge/, 更新時: /hoge/{idPath}/, 削除時: /hoge/{idPath}/delete
- * - 予約Data[data] -
+ * - Data -
  * updateFlag: 更新モードの時はtrue
  * updating: 処理中の時はtrue
  * item: 登録/更新情報
- * - 拡張メソッド[methods] -
+ * actionSuccessKey: 処理成功時に $emit されるイベントキー
+ * actionFailureKey: 処理失敗時に $emit されるイベントキー
+ * - 標準API
  * register: 登録/変更します
  * registerData: 登録/変更情報をハッシュで生成します
  * registerPath: 登録先パスを生成します
@@ -39,7 +41,11 @@ export default {
   props: {
     updateFlag: {type: Boolean, default: false},
     autoFlattenItem: {type: Boolean, default: false},
-    path: {type: String, required: true}
+    path: {type: String, required: true},
+    // 処理完了後に emit されるイベントキー
+    actionSuccessKey: {type: String, default: Action.Success},
+    // 処理失敗後に emit されるイベントキー
+    actionFailureKey: {type: String, default: Action.Failure}
   },
   mixins: [ViewBasic],
   components: {},
@@ -116,7 +122,7 @@ export default {
     },
     // 登録/変更/削除時の成功処理を行います。
     actionSuccess(v) {
-      EventEmitter.$emit(Action.CrudSuccess, v)
+      EventEmitter.$emit(Action.Success, v)
       if (this.updateFlag === false) this.clear()
       this.message(this.actionSuccessMessage())
       Lib.Log.debug('success')
@@ -126,7 +132,7 @@ export default {
     // 登録/変更/削除時の失敗処理を行います。
     actionFailure(xhr) {
       this.apiFailure(xhr)
-      EventEmitter.$emit(Action.CrudFailure, v)
+      EventEmitter.$emit(Action.Failure, xhr)
     }
   }
 }

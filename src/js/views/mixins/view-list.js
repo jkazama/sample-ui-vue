@@ -11,22 +11,21 @@ import ViewBasic from 'views/mixins/view-basic'
  * (API側でPagingListを返す必要があります)
  * 本クラスを利用する際は初期化時に以下の設定が必要です。
  * ・path属性の定義
- * ・createdメソッド内でinitializedを呼び出す
  * ---
- * - 属性 -
+ * - Props -
  * initialSearch: 初回検索を行うか(未指定時はtrue)
  * paging: ページング検索を行うか(未指定時はfalse)
  * path: 検索APIパス(必須: 標準でapiUrlへ渡されるパス)
- * - 予約Data[data] -
+ * actionSuccessKey: 処理成功時に $emit されるイベントキー
+ * - Data -
  * items: 検索結果一覧
  * page: ページング情報
  * updating: 処理中の時はtrue
- * - 拡張メソッド[methods] -
+ * - 標準API -
  * search: 検索する
  * next: ページング時に次ページを呼び出してitemsへ追加する
-* searchData: 検索条件をハッシュで生成する
+ * searchData: 検索条件をハッシュで生成する
  * searchPath: 検索時の呼び出し先URLパスを生成する(apiUrlへ渡されるパス)
- * layoutSearch: 検索後のレイアウト調整を行う(検索結果はitemsに格納済)
  */
 export default {
   data() {
@@ -43,7 +42,7 @@ export default {
     paging: {type: Boolean, default: false},
     path: {type: String, required: true},
     // 検索完了後に emit されるイベントキー
-    eventFinishKey: {type: String, default: Action.SearchSuccess}
+    actionSuccessKey: {type: String, default: Action.SearchSuccess}
   },
   created() {
     this.clear()
@@ -93,7 +92,7 @@ export default {
       let success = (data) => {
         this.updating = false
         this.renderList(data, append)
-        EventEmitter.$emit(this.eventFinishKey, data)
+        EventEmitter.$emit(this.actionSuccessKey, data)
       }
       let failure = (error) => {
         this.updating = false

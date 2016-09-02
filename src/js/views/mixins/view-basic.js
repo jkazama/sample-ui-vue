@@ -1,17 +1,17 @@
 import Param from 'variables'
 import {Level, Event, Action, Style} from 'constants'
 import * as Lib from "platform/plain"
-import $ from "jquery"
 import Vue from "vue"
 
 import Message from "components/Message.vue"
 import CommandButton from "components/CommandButton.vue"
 import InputText from "components/InputText.vue"
 import ListGroup from "components/ListGroup.vue"
+import Modal from "components/Modal.vue"
 
 /**
  * View コンポーネントのベーシックな Mixin。
- * ファイルアップロードや確認ダイアログ/単純表示等、シンプルな処理が必要なときなどに利用してください
+ * 親パネルの他、ファイルアップロードや確認ダイアログ/単純表示等、シンプルな処理が必要なときなどに利用してください。
  * 本クラスを利用する際は初期化時に以下の設定が必要です。
  * ---
  * - 標準API
@@ -33,7 +33,7 @@ export default {
     return {}
   },
   components: {
-    Message, CommandButton, InputText, ListGroup
+    Message, CommandButton, InputText, ListGroup, Modal
   },
   created() {
     this.clear()
@@ -74,11 +74,18 @@ export default {
       return `${Param.Api.root}${path}`
     },
     // ファイルオブジェクトを取得します。apiUpload時のdataへ設定するアップロード値を取得する際に使用してください。
-    file(el) {
-      return this.files(el)[0]
+    file(query = 'input[type="file"]') {
+      return this.files(query)[0]
     },
-    files(el) {
-      return $(el, $(this.$el)).prop('files')
+    files(query = 'input[type="file"]') {
+      let inputs = this.$el.querySelectorAll(query)
+      let ret = new Array(inputs.length)
+      let i = 0
+      Array.from(inputs).forEach(input => {
+        ret[i] = input.files[0]
+        i++
+      })
+      return ret
     },
     // 引数に与えたハッシュオブジェクトでネストされたものを「.」付の一階層へ変換します。(引数は上書きしません)
     // {a: {b: {c: 'd'}}} -> {'a.b.c': 'd'}
@@ -88,12 +95,12 @@ export default {
     //　配列(オブジェクト)をフラットなパラメタ要素へ展開します
     // 直接オブジェクトへ上書きしたい際は第3引数にハッシュオブジェクトを渡してください。
     // [{k: 'a'}, {k: 'b'}] -> {'params[0].k': 'a', 'params[1].k': 'b'}
-    // ※jquery/SpringMVCでのネスト値不具合を解消します。
+    // ※ajax/SpringMVCでのネスト値不具合を解消します。
     // see http://stackoverflow.com/questions/5900840/post-nested-object-to-spring-mvc-controller-using-json
     paramArray(array, keyName = 'params', ret = {}) {
-      var i = 0
-      Array.from(array).forEach((param) => {
-        Object.keys(param).forEach((key) => {
+      let i = 0
+      Array.from(array).forEach(param => {
+        Object.keys(param).forEach(key => {
           let k = `${keyName}[${i}].${key}`
           ret[k] = param[key]
         })

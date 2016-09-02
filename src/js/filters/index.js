@@ -1,6 +1,6 @@
 /*----------------------------------
  Vue.jsのカスタムフィルタ定義
- カスタムフィルタは「v-text」などで変数を表示する際に値のフォーマッティングなどを可能にします。
+ カスタムフィルタは変数を表示する際に値のフォーマッティングなどを可能にします。
  例: {{createDay | day}}
  参考:
  http://jp.vuejs.org/guide/custom-filter.html
@@ -8,8 +8,6 @@
 ----------------------------------*/
 
 import moment from "moment"
-
-// # Text Filter
 
 // 値が未設定の場合に引数へ与えた標準ラベルを表示します。
 export function defaultText(v, label = '-') {
