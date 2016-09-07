@@ -1,17 +1,14 @@
-<style lang="sass"></style>
-
-<template lang="jade">
+<template lang="pug">
 .col-xs-6.col-xs-offset-3
   .panel.panel-default
     .panel-heading セッションタイムアウト
     .panel-body
       .alert.alert-warning ログインしていないか一定時間操作がありませんでした。
     .panel-footer
-      a.btn.btn-block.btn-default(v-link="{path: '/login'}")
+      router-link.btn.btn-block.btn-default(to="/login")
         |　ログイン画面へ戻る
 </template>
 
 <script lang="babel">
-import * as Option from "platform/vue-option"
-export default new Option.ComponentBuilder({})
+export default {name: 'timeout-view'}
 </script>

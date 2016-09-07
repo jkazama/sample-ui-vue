@@ -2,9 +2,6 @@
 .tab-pane {
   padding: 10px 0;
 }
-.l-list-body {
-  height: 210px;
-}
 .l-panel-asset-info {
   .panel-body {
     height: 300px;
@@ -12,7 +9,7 @@
 }
 </style>
 
-<template lang="jade">
+<template lang="pug">
 .container-fluid
   .row
     .col-md-4
@@ -30,8 +27,8 @@
         .tab-pane#deposit
           |　TBD
         .tab-pane#withdrawal.active
-          div(is="asset-withdrawal-crud")
-          div(is="asset-withdrawal-list")
+          WithdrawalCrud(ref="crud")
+          WithdrawalList(ref="list")
         .tab-pane#cashflow
           |　TBD
   hr
@@ -45,17 +42,19 @@
 </template>
 
 <script lang="babel">
-import {Action} from 'platform/vue-constants'
-import * as Option from "platform/vue-option"
-import withdrawalCrud from "components/partials/asset-withdrawal-crud"
-import withdrawalList from "components/partials/asset-withdrawal-list"
-export default new Option.ComponentBuilder({
+import {Action} from 'constants'
+import ViewBasic from "views/mixins/view-basic"
+import WithdrawalCrud from "views/asset/WithdrawalCrud.vue"
+import WithdrawalList from "views/asset/WithdrawalList.vue"
+export default {
+  name: 'asset-view',
+  mixins: [ViewBasic],
   components: {
-    "asset-withdrawal-crud": withdrawalCrud,
-    "asset-withdrawal-list": withdrawalList
+    "WithdrawalCrud": WithdrawalCrud,
+    "WithdrawalList": WithdrawalList
   },
-  ready: function() {
-    this.$on(Action.CrudSuccess, (v) => this.$children[1].search())
+  mounted() {
+    EventEmitter.$on(Action.Success, (v) => this.$refs.list.search())
   }
-}).build()
+}
 </script>

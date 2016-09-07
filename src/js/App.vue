@@ -1,14 +1,12 @@
-<style lang="sass"></style>
-
-<template lang="jade">
+<template lang="pug">
   .l-container-main
     nav.navbar.navbar-default.navbar-static-top.l-nav-header(v-if="logined")
       .navbar-header
         a.navbar-brand(href="/") App
       ul.nav.navbar-nav
-        li: a(v-link="{path: '/top'}") "取扱い商品名 (TOP)" 
-        li: a(v-link="{path: '/trade'}") 取引情報
-        li: a(v-link="{path: '/asset'}") 口座資産
+        li: router-link(to="/top") "取扱い商品名 (TOP)" 
+        li: router-link(to="/trade") 取引情報
+        li: router-link(to="/asset") 口座資産
       ul.nav.navbar-nav.navbar-right
         li.dropdown
           a.dropdown-toggle(href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false")
@@ -29,39 +27,40 @@
 </template>
 
 <script lang="babel">
-import Param from 'variables'
 import * as Lib from 'platform/plain'
-import * as Option from "platform/vue-option"
-// ヘッダパネル
-export default new Option.ComponentBuilder({
-  data: {
-    logined: false
-  },
-  created: function() {
-    this.initialized()
-    this.checkLogin(() => this.logined = true)
+import ViewBasic from "views/mixins/view-basic"
+export default {
+  name: 'app-view',
+  mixins: [ViewBasic],
+  data() {
+    return {
+      logined: false
+    }
   },
   methods: {
-    checkLogin: function(success) {
+    checkLogin(route, redirect, next) {
+      let success = (v) => {
+        this.logined = true
+        next()
+      }
       let failure = (err) => {
         Lib.Log.debug('ログイン情報を確認できませんでした')
-        this.logined = false
-        if (this.sessionValue()) {
-          this.logoutSession()
-          this.$route.router.go("/timeout")
-        } else {
-          this.$route.router.go("/login")
-        }
+        let current = this.logined // 事前ログイン状態に応じて表示ページを変更
+        this.logoutLocal()
+        current ? redirect('/timeout') : redirect('/login')
       }
-      Lib.Ajax.get(`${Param.Api.root}/account/loginStatus`, {}, success, failure)
+      this.apiGet('/account/loginStatus', {}, success, failure)
     },
-    logout: function(e) {
-      this.logined = false
-      this.logoutSession()
+    logout() {
+      this.logoutLocal()
       this.apiPost('/logout', {}, ((v) => true), ((e)=> false))
+      this.$router.push('/login')
+    },
+    logoutLocal() {
+      this.logined = false
       Lib.Log.debug('ログアウトしました')
-      this.$route.router.go("/login")
+      this.logoutSession()
     }
   }
-}).build()
+}
 </script>
