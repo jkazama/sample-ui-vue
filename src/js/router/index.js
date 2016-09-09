@@ -31,20 +31,7 @@ router.beforeEach((route, redirect, next) => {
   if (route.matched.some(m => m.meta.anonymous)) {
     next()
   } else {
-    if (router.app.$refs.app) {
-      router.app.$refs.app.checkLogin(route, redirect, next)
-    } else {　// ページリフレッシュ時にrouter初期化が遅れるケースの対応
-      let retry = 0;
-      let interval = setInterval(() => {
-        if (router.app.$refs.app) {
-          router.app.$refs.app.checkLogin(route, redirect, next)
-          clearInterval(interval)
-        } else {
-          retry++
-          if (3 == retry) clearInterval(interval)
-        }
-      }, 200)
-    }
+    Vue.nextTick(() => router.app.$refs.app.checkLogin(route, redirect, next))
   }
 })
 export default router

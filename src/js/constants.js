@@ -20,7 +20,5 @@ export const Event = {
 
 // 実行アクション定数
 export const Action = {
-  Success: 'vue-action-success',
-  Failure: 'vue-action-failure',
-  SearchSuccess: 'vue-action-search-success'
+  UpdateAsset: 'vue-action-update-asset'
 }
