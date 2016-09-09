@@ -91,9 +91,10 @@ src
   css                                … CSS テンプレートファイル ( SCSS )
   html                               … HTML テンプレートファイル ( Pug )
   js
+    api                              … API処理 (Vue.js 非依存)
     components                       … SPA で利用されるコンポーネント
     filters                          … フィルタ関数
-    platform                         … プロジェクト内JSライブラリ
+    platform                         … プロジェクト内JSライブラリ (Vue.js 非依存)
     router                           … SPA ルーティング定義
     views                            … 画面コンポーネント
     - app.js                         … SPA における Entry ファイル
