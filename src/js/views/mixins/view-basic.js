@@ -1,5 +1,5 @@
 import Param from 'variables'
-import {Level, Event, Action, Style} from 'constants'
+import {Level, Event} from 'constants'
 import * as Lib from "platform/plain"
 import Vue from "vue"
 

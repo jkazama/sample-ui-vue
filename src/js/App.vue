@@ -10,7 +10,8 @@
       ul.nav.navbar-nav.navbar-right
         li.dropdown
           a.dropdown-toggle(href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false")
-            | ○○ 様 
+            span(v-text="user.name")
+            |  様 
             span.caret
           ul.dropdown-menu(role="menu")
             li: a(href="#")
@@ -36,6 +37,11 @@ export default {
   data() {
     return {
       logined: false
+    }
+  },
+  computed: {
+    user() {
+      return this.sessionValue() 
     }
   },
   methods: {
