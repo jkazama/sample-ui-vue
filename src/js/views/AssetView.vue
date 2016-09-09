@@ -42,7 +42,6 @@
 </template>
 
 <script lang="babel">
-import {Action} from 'constants'
 import ViewBasic from "views/mixins/view-basic"
 import WithdrawalCrud from "views/asset/WithdrawalCrud.vue"
 import WithdrawalList from "views/asset/WithdrawalList.vue"
@@ -52,9 +51,6 @@ export default {
   components: {
     "WithdrawalCrud": WithdrawalCrud,
     "WithdrawalList": WithdrawalList
-  },
-  mounted() {
-    EventEmitter.$on(Action.Success, (v) => this.$refs.list.search())
   }
 }
 </script>
