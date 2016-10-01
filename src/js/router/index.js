@@ -27,11 +27,11 @@ var router = new Router({
 })
 
 // SPA ルーティング前のログインチェック差込
-router.beforeEach((route, redirect, next) => {
-  if (route.matched.some(m => m.meta.anonymous)) {
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(m => m.meta.anonymous)) {
     next()
   } else {
-    Vue.nextTick(() => router.app.$refs.app.checkLogin(route, redirect, next))
+    Vue.nextTick(() => router.app.$refs.app.checkLogin(to, from, next))
   }
 })
 export default router

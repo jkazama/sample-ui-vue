@@ -41,11 +41,12 @@ export default {
   },
   computed: {
     user() {
-      return this.sessionValue() 
+      let logined = this.sessionValue()
+      return logined ? logined : {}
     }
   },
   methods: {
-    checkLogin(route, redirect, next) {
+    checkLogin(to, from, next) {
       let success = (v) => {
         this.logined = true
         next()
@@ -54,7 +55,7 @@ export default {
         Lib.Log.debug('ログイン情報を確認できませんでした')
         let current = this.logined // 事前ログイン状態に応じて表示ページを変更
         this.logoutLocal()
-        current ? redirect('/timeout') : redirect('/login')
+        current ? next('/timeout') : next('/login')
       }
       api.loginStatus(success, failure)
     },
