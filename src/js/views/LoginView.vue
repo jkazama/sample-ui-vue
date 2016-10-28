@@ -5,10 +5,10 @@
       .panel.panel-default.l-panel-login
         .panel-heading ログインフォーム
         .panel-body
-          InputText.l-row(placeholder="ログインID", v-model="loginId", :enter="login")
-          InputText(placeholder="パスワード", v-model="password", password=true, :enter="login")
+          InputText.l-row(placeholder="ログインID", v-model="loginId", @enter="login")
+          InputText(placeholder="パスワード", v-model="password", password=true, @enter="login")
         .panel-footer
-          CommandButton.btn-primary(@click.native="login", :updating="updating")
+          CommandButton.btn-primary(@click="login", :updating="updating")
             i.fa.fa-fwfa-lg.fa-sign-in
             | 　ログイン
       .alert.alert-warning サーバ側（サンプル実装版）の認証モードを有効にした時は sample/sample でログインしてください。
@@ -16,7 +16,7 @@
 
 <script lang="babel">
 import {Level} from "constants"
-import * as Lib from "platform/plain"
+import {Log} from "platform/plain"
 import ViewBasic from "views/mixins/view-basic"
 import api from "api/context"
 export default {
@@ -31,11 +31,11 @@ export default {
   },
   methods: {
     login() {
-      Lib.Log.debug(this.loginId)
+      Log.debug(this.loginId)
       this.updating = true
       let success = (ret) => {
         this.updating = false
-        Lib.Log.debug("ログインに成功しました - ")
+        Log.debug("ログインに成功しました - ")
         this.forward()
       }
       let failure = (error) => {

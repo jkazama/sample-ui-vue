@@ -27,8 +27,8 @@
         .tab-pane#deposit
           |　TBD
         .tab-pane#withdrawal.active
-          WithdrawalCrud(ref="crud")
-          WithdrawalList(ref="list")
+          WithdrawalCrud
+          WithdrawalList
         .tab-pane#cashflow
           |　TBD
   hr
