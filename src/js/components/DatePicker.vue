@@ -97,13 +97,6 @@ export default {
     updateValue(v){
       this.$emit('input', v)
     },
-    onEnter(event) {
-      if (this.enter) {
-        this.enter(event)
-      } else {
-        Lib.Log.debug('enter empty executed. please set v-bind:enter="yourParentMethodName"')
-      }
-    },
     clearDate() {
       this.updateValue(null)
     }
