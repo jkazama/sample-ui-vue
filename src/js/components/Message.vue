@@ -63,7 +63,6 @@ export default {
     },
     handleGlobalMessage(messages) {
       let message = messages.global
-      console.log(messages)
       let valid = this.globalKey ? this.globalKey === messages.globalKey : true
       if (message && valid) {
         this.message = Array.isArray(message) ? message[0] : message
