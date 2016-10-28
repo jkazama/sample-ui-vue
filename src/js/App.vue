@@ -14,7 +14,7 @@
             |  様 
             span.caret
           ul.dropdown-menu(role="menu")
-            li: a(href="#")
+            li: a
               i.fa.fa-fw.fa-user
               |  アカウント情報
             li.divider
