@@ -37,11 +37,11 @@ import Vue from 'vue'
 import Message from 'components/Message.vue'
 import Flatpickr from 'flatpickr'
 // for localize
-Flatpickr.l10n.weekdays = {
+Flatpickr.l10ns.default.weekdays = {
   shorthand: ['日', '月', '火', '水', '木', '金', '土'],
   longhand: ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日']
 }
-Flatpickr.l10n.months = {
+Flatpickr.l10ns.default.months = {
   shorthand: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
   longhand: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
 }
@@ -96,13 +96,6 @@ export default {
   methods: {
     updateValue(v){
       this.$emit('input', v)
-    },
-    onEnter(event) {
-      if (this.enter) {
-        this.enter(event)
-      } else {
-        Lib.Log.debug('enter empty executed. please set v-bind:enter="yourParentMethodName"')
-      }
     },
     clearDate() {
       this.updateValue(null)

@@ -37,9 +37,10 @@ export default {
     this.clear()
   },
   methods: {
+    // コンポーネントタグ(テンプレートで定義された文字列)を返します。文字列はアッパーキャメルケースで統一して返されます。
     componentTag() {
       let tag = this.$options._componentTag
-      return tag ? tag : ""
+      return tag ? _.upperFirst(_.camelCase(tag)) : ""
     },
     // メッセージを通知します。
     message(globalMessage = null, columnMessages = [], level = Level.INFO) {
