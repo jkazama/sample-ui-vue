@@ -33,7 +33,7 @@ const resource = {
     static: `${paths.src.static}/**/*`
   },
   vendor: {
-    js: ['jquery', 'lodash', 'moment', 'vue', 'vue-router', 'bootstrap-sass'],
+    js: ['jquery', 'lodash', 'moment', 'flatpickr', 'vue', 'vue-router', 'bootstrap-sass'],
     css: [`${paths.node.modules}/flatpickr/dist/flatpickr.min.css`],
     fontawesome: `${paths.node.modules}/font-awesome/fonts/**/*`
   }
