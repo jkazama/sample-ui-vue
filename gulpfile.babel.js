@@ -34,6 +34,7 @@ const resource = {
   },
   vendor: {
     js: ['jquery', 'lodash', 'moment', 'vue', 'vue-router', 'bootstrap-sass'],
+    css: [`${paths.node.modules}/flatpickr/dist/flatpickr.min.css`],
     fontawesome: `${paths.node.modules}/font-awesome/fonts/**/*`
   }
 }
@@ -141,6 +142,10 @@ gulp.task('build:sass', () => {
 
 // copy Static Resource
 gulp.task('build:static', () => {
+  gulp.src(resource.vendor.css)
+    .pipe($.concat('vendor.css'))
+    .pipe($.pleeease())
+    .pipe(gulp.dest(paths.dist.css))
   gulp.src(resource.vendor.fontawesome)
     .pipe(gulp.dest(paths.dist.font))
   return gulp.src(resource.src.static)
