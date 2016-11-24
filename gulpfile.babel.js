@@ -109,7 +109,7 @@ gulp.task('build:webpack', () => {
         modulesDirectories: ['node_modules', paths.src.js],
         extensions: ['', '.js', '.vue'],
         alias: {
-          vue: 'vue/dist/vue.js'
+          vue: 'vue/dist/vue.common.js'
         }
       },
       plugins: plugins
