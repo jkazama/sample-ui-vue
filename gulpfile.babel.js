@@ -33,7 +33,7 @@ const resource = {
     static: `${paths.src.static}/**/*`
   },
   vendor: {
-    js: ['jquery', 'lodash', 'moment', 'vue', 'vue-router', 'bootstrap-sass'],
+    js: ['jquery', 'lodash', 'moment', 'flatpickr', 'vue', 'vue-router', 'bootstrap-sass'],
     css: [`${paths.node.modules}/flatpickr/dist/flatpickr.min.css`],
     fontawesome: `${paths.node.modules}/font-awesome/fonts/**/*`
   }
@@ -109,7 +109,7 @@ gulp.task('build:webpack', () => {
         modulesDirectories: ['node_modules', paths.src.js],
         extensions: ['', '.js', '.vue'],
         alias: {
-          vue: 'vue/dist/vue.js'
+          vue: 'vue/dist/vue.common.js'
         }
       },
       plugins: plugins
