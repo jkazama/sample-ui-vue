@@ -35,7 +35,7 @@ export default {
     /** 処理中フラグ */
     updating: {type: Boolean, default: false},
     // from v-model
-    value: {required: true}
+    value: {required: true},
     /** スタイルクラス定義 */
     styleClass: {type: Object, default: () => {}},
   },
