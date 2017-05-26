@@ -9,7 +9,7 @@ Message(global=true, globalKey=anyEventKey)
 Message(field=anyMessageKey)
   <input type="text" …
 -->
-<style lang="sass">
+<style lang="scss">
 .l-message-group {
   display: block;
   input, textarea, select {

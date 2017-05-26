@@ -84,10 +84,10 @@ gulp.task('revision', (callback) =>
 gulp.task('build:webpack', () => {
   process.env.NODE_ENV = (production == true) ? 'production' : 'development'
   let plugins = [
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.CommonsChunkPlugin("vendor", "vendor.bundle.js"),
+    new webpack.optimize.CommonsChunkPlugin({name: "vendor", filename: "vendor.bundle.js"}),
     new webpack.ProvidePlugin({jQuery: "jquery", $: "jquery"})
   ]
+  console.log(paths.src.js)
   if (production) plugins.push(new webpack.optimize.UglifyJsPlugin({compress: { warnings: false　}}))
   return gulp.src([resource.src.webpack.babel, resource.src.webpack.vue])
     .pipe($.plumber())
@@ -100,16 +100,17 @@ gulp.task('build:webpack', () => {
       output: {filename: 'bundle.js'},
       watch: !production,
       module: {
-        loaders: [
-          {test: /\.js$/, loader: 'babel', exclude: /node_modules/},
-          {test: /\.vue$/, loader: 'vue', exclude: /node_modules/}
-        ]
+        rules: [
+          {test: /\.js$/, use: 'babel-loader', exclude: /node_modules/},
+          {test: /\.vue$/, use: 'vue-loader', exclude: /node_modules/}
+        ],
       },
       resolve: {
-        modulesDirectories: ['node_modules', paths.src.js],
-        extensions: ['', '.js', '.vue'],
+        modules: ['node_modules', paths.src.js],
+        extensions: ['*', '.js', '.vue'],
         alias: {
-          vue: 'vue/dist/vue.common.js'
+          vue: 'vue/dist/vue.common.js',
+          constants: `${paths.src.js}/constants`,
         }
       },
       plugins: plugins

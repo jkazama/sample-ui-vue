@@ -4,7 +4,6 @@
 ----------------------------------*/
 
 import {Level} from "constants"
-
 const debug = process.env.NODE_ENV !== 'production'
 
 export default {

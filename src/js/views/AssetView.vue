@@ -1,4 +1,4 @@
-<style lang="sass">
+<style lang="scss">
 .tab-pane {
   padding: 10px 0;
 }

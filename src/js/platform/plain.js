@@ -3,7 +3,7 @@
  JS全般で利用されるグローバル処理定義
 ----------------------------------*/
 
-import {Level} from 'constants'
+import {Level} from 'constants.js'
 import Param from 'variables'
 
 // ## ログユーティリティ
