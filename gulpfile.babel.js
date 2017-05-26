@@ -87,7 +87,6 @@ gulp.task('build:webpack', () => {
     new webpack.optimize.CommonsChunkPlugin({name: "vendor", filename: "vendor.bundle.js"}),
     new webpack.ProvidePlugin({jQuery: "jquery", $: "jquery"})
   ]
-  console.log(paths.src.js)
   if (production) plugins.push(new webpack.optimize.UglifyJsPlugin({compress: { warnings: false　}}))
   return gulp.src([resource.src.webpack.babel, resource.src.webpack.vue])
     .pipe($.plumber())
