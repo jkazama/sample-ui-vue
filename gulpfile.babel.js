@@ -85,7 +85,8 @@ gulp.task('build:webpack', () => {
   process.env.NODE_ENV = (production == true) ? 'production' : 'development'
   let plugins = [
     new webpack.optimize.CommonsChunkPlugin({name: "vendor", filename: "vendor.bundle.js"}),
-    new webpack.ProvidePlugin({jQuery: "jquery", $: "jquery"})
+    new webpack.ProvidePlugin({jQuery: "jquery", $: "jquery"}),
+    new webpack.DefinePlugin({'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)})
   ]
   if (production) plugins.push(new webpack.optimize.UglifyJsPlugin({compress: { warnings: false　}}))
   return gulp.src([resource.src.webpack.babel, resource.src.webpack.vue])
