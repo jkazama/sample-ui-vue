@@ -88,7 +88,10 @@ gulp.task('build:webpack', () => {
     new webpack.ProvidePlugin({jQuery: "jquery", $: "jquery"}),
     new webpack.DefinePlugin({'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)})
   ]
-  if (production) plugins.push(new webpack.optimize.UglifyJsPlugin({compress: { warnings: false　}}))
+  if (production) {
+    plugins.push(new webpack.optimize.UglifyJsPlugin({compress: { warnings: false　}}))
+    plugins.push(new webpack.optimize.ModuleConcatenationPlugin())
+  }
   return gulp.src([resource.src.webpack.babel, resource.src.webpack.vue])
     .pipe($.plumber())
     .pipe(webpackStream({
