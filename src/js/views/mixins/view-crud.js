@@ -1,7 +1,5 @@
-import Param from 'variables'
-import {Level} from 'constants'
+import { clone } from 'lodash'
 import * as Lib from 'platform/plain'
-import Vue from 'vue'
 
 import ViewBasic from 'views/mixins/view-basic'
 
@@ -65,7 +63,7 @@ export default {
     // 登録/変更情報をハッシュで返します。
     // 標準ではitemの値をコピーして返します。
     registerData() {
-      let data = _.clone(this.item)
+      let data = clone(this.item)
       Object.keys(data).forEach((k) => {
         if (typeof data[k] === 'object') data[k] = null
       })

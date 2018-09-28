@@ -16,7 +16,7 @@ const paths = {
     root: `${root.dist}`,
     js:   `${root.dist}/js`,
     css:  `${root.dist}/css`,
-    font: `${root.dist}/fonts`
+    font: `${root.dist}/webfonts`
   },
   node: {
     modules: `${__dirname}/node_modules`
@@ -33,16 +33,15 @@ const resource = {
     static: `${paths.src.static}/**/*`
   },
   vendor: {
-    js: ['jquery', 'lodash', 'moment', 'flatpickr', 'vue', 'vue-router', 'bootstrap-sass'],
+    js: ['jquery', 'lodash', 'flatpickr', 'vue', 'vue-router', 'bootstrap'],
     css: [`${paths.node.modules}/flatpickr/dist/flatpickr.min.css`],
-    fontawesome: `${paths.node.modules}/font-awesome/fonts/**/*`
+    fontawesome: `${paths.node.modules}/@fortawesome/fontawesome-free/webfonts/**/*`
   }
 }
 
 import gulp from 'gulp'
 import gulpLoaderPlugins from 'gulp-load-plugins'
 import del from 'del'
-import path from 'path'
 import webpack from 'webpack'
 import webpackStream from 'webpack-stream'
 import runSequence from 'run-sequence'
@@ -50,7 +49,7 @@ import browserSyncTool from 'browser-sync'
 import RevAll from 'gulp-rev-all'
 
 const $ = gulpLoaderPlugins()
-const browserSync   = browserSyncTool.create()
+const browserSync = browserSyncTool.create()
 
 let production = false
 
@@ -59,11 +58,11 @@ gulp.task('default', ['build', 'server'])
 
 //## build for developer
 gulp.task('build', (callback) =>
-  runSequence('clean', ['build:pug', 'build:sass', 'build:webpack', 'build:static'], callback)
+  runSequence('clean', ['build:pug', 'build:sass', 'build:static', 'build:webpack'], callback)
 )
 
 //## build production
-gulp.task('build-prod', (callback) => 
+gulp.task('build-prod', (callback) =>
   runSequence('production', 'build', 'revision', callback)
 )
 
@@ -73,39 +72,61 @@ gulp.task('clean', () =>
 )
 
 // production option
-gulp.task('production', () => production = true )
+gulp.task('production', () => production = true)
 
 // support Resource Revision
 gulp.task('revision', (callback) =>
   runSequence('revision:clean', 'revision:append', 'clean', 'revision:copy', 'revision:clean', callback)
 )
 
-// compile Webpack [ ES6(Babel) / Vue -> SPA(app.js) ]
+// compile Webpack [ ES20xx(Babel) / Vue -> SPA(app.js) ]
+import VueLoaderPlugin from 'vue-loader/lib/plugin'
 gulp.task('build:webpack', () => {
-  process.env.NODE_ENV = (production == true) ? 'production' : 'development'
-  let plugins = [
-    new webpack.optimize.CommonsChunkPlugin({name: "vendor", filename: "vendor.bundle.js"}),
-    new webpack.ProvidePlugin({jQuery: "jquery", $: "jquery"}),
-    new webpack.DefinePlugin({'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)})
+  process.env.NODE_ENV = production ? 'production' : 'development'
+  const plugins = [
+    new webpack.ProvidePlugin({ jQuery: "jquery", $: "jquery" }),
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    new webpack.DefinePlugin({ 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV) }),
+    new VueLoaderPlugin(),
   ]
-  if (production) {
-    plugins.push(new webpack.optimize.UglifyJsPlugin({compress: { warnings: false　}}))
-    plugins.push(new webpack.optimize.ModuleConcatenationPlugin())
-  }
   return gulp.src([resource.src.webpack.babel, resource.src.webpack.vue])
     .pipe($.plumber())
     .pipe(webpackStream({
-      devtool: '#source-map',
+      mode: process.env.NODE_ENV,
+      devtool: production ? false : '#source-map',
       entry: {
         app: `${paths.src.js}/app.js`,
         vendor: resource.vendor.js
       },
-      output: {filename: 'bundle.js'},
+      output: { filename: '[name].bundle.js' },
+      optimization: {
+        splitChunks: { name: 'vendor', chunks: 'initial' },
+        noEmitOnErrors: true,
+      },
       watch: !production,
       module: {
         rules: [
-          {test: /\.js$/, use: 'babel-loader', exclude: /node_modules/},
-          {test: /\.vue$/, use: 'vue-loader', exclude: /node_modules/}
+          { test: /\.js$/, use: 'babel-loader', exclude: /node_modules/ },
+          { test: /\.vue$/, use: 'vue-loader', exclude: /node_modules/ },
+          { test: /\.pug$/, use: 'pug-plain-loader', exclude: /node_modules/ },
+          {
+            test: /\.scss$/,
+            use: [
+              'vue-style-loader',
+              'css-loader',
+              'sass-loader'
+            ],
+            exclude: /node_modules/
+          },
+          {
+            test: /\.sass$/,
+            use: [
+              'vue-style-loader',
+              'css-loader',
+              'sass-loader?indentedSyntax'
+            ],
+            exclude: /node_modules/
+          },
         ],
       },
       resolve: {
@@ -117,7 +138,7 @@ gulp.task('build:webpack', () => {
         }
       },
       plugins: plugins
-     }, webpack))
+    }, webpack))
     .pipe(gulp.dest(paths.dist.js))
     .pipe(browserSync.stream())
 })
@@ -127,31 +148,28 @@ gulp.task('build:pug', () => {
   return gulp.src(resource.src.pug)
     .pipe($.plumber())
     .pipe($.pug())
-    .pipe($.htmlhint())
-    .pipe($.htmlhint.reporter())
     .pipe(gulp.dest(paths.dist.root))
-    .pipe(browserSync.stream())  
+    .pipe(browserSync.stream())
 })
 
 // compile Sass -> CSS
 gulp.task('build:sass', () => {
   return gulp.src(resource.src.sass)
     .pipe($.plumber())
-    .pipe($.sass())
     .pipe($.concat('style.css'))
-    .pipe($.pleeease())
+    .pipe($.sass({ outputStyle: 'compressed' }))
     .pipe(gulp.dest(paths.dist.css))
     .pipe(browserSync.stream())
 })
 
 // copy Static Resource
 gulp.task('build:static', () => {
-  gulp.src(resource.vendor.css)
-    .pipe($.concat('vendor.css'))
-    .pipe($.pleeease())
-    .pipe(gulp.dest(paths.dist.css))
   gulp.src(resource.vendor.fontawesome)
     .pipe(gulp.dest(paths.dist.font))
+  gulp.src(resource.vendor.css)
+    .pipe($.concat('vendor.css'))
+    .pipe($.sass({ outputStyle: 'compressed' }))
+    .pipe(gulp.dest(paths.dist.css))
   return gulp.src(resource.src.static)
     .pipe(gulp.dest(paths.dist.root))
 })

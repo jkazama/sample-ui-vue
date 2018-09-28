@@ -1,6 +1,7 @@
 <template lang="pug">
-.container
-  .alert.alert-warning.l-center 取引情報作成中
+div
+  .row: .col
+    .alert.alert-warning.text-center 取引情報作成中
 </template>
 
 <script lang="babel">
