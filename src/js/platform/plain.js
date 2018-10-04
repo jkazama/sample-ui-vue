@@ -33,7 +33,7 @@ export class Log {
 }
 
 // ## 非同期API要求ユーティリティ
-// JSON形式での接続前提とします。
+// リクエストは Form 戻り値はJSON形式を想定とします。
 import axios from 'axios'
 axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded'
 axios.defaults.headers['Expires'] = -1

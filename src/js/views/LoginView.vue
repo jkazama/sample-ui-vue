@@ -1,7 +1,6 @@
 <template lang="pug">
   .row.justify-content-center
     .col-md-4
-      Message(global=true)
       .card.m-2
         .card-body
           .card-title.p-1: h5 ログインフォーム

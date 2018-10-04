@@ -1,12 +1,13 @@
 <template lang="pug">
-.col-xs-6.col-xs-offset-3
-  .panel.panel-default
-    .panel-heading セッションタイムアウト
-    .panel-body
-      .alert.alert-warning ログインしていないか一定時間操作がありませんでした。
-    .panel-footer
-      router-link.btn.btn-block.btn-default(to="/login")
-        |　ログイン画面へ戻る
+.row.justify-content-center
+  .col-md-4
+    .card.m-2
+      .card-body
+        .card-title.p-1: h5 セッションタイムアウト
+        .card-text
+          .alert.alert-warning.mb-2 ログインしていないか一定時間操作がありませんでした。
+          router-link.btn.btn-block.btn-default(to="/login")
+            |　ログイン画面へ戻る
 </template>
 
 <script lang="babel">
