@@ -24,10 +24,10 @@ Message(:field="field")
     input.form-control(type="text", :placeholder="placeholder", :value="value", :disabled="updating")
     .input-group-append(v-if="time")
       button.btn.btn-outline-secondary
-        i.fa.fa-check
+        i.fas.fa-check
     .input-group-append
       button.btn.btn-outline-secondary(@click="clearDate")
-        i.fa.fa-times
+        i.fas.fa-times
 </template>
 
 <script lang="babel">

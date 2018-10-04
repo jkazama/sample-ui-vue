@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "bootstrap": "~4.1.0",
-    "flatpickr": "~4.3.0",
+    "flatpickr": "~4.5.0",
     "@fortawesome/fontawesome-free": "~5.3.0",
     "jquery": "~3.3.0",
     "popper.js": "~1.14.0",

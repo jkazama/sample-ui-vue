@@ -42,7 +42,7 @@ div
     transition(v-if="notification", name="fade")
       .l-message-global
         .alert.p-2(:class="[classAlert, classText]", v-if="message")
-          i.fa.fa-exclamation-triangle
+          i.fas.fa-exclamation-triangle
           | &nbsp;{{message}}
   div(v-if="!global")
     div(:class="{'input-group': message, 'l-message-group': message}")

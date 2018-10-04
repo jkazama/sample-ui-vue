@@ -1,16 +1,19 @@
 <template lang="pug">
-  .container
-    Message(global=true)
-    .col-xs-6.col-xs-offset-3
-      .panel.panel-default.l-panel-login
-        .panel-heading ログインフォーム
-        .panel-body
-          InputText.l-row(placeholder="ログインID", v-model="loginId", @enter="login")
-          InputText(placeholder="パスワード", v-model="password", password=true, @enter="login")
-        .panel-footer
-          CommandButton.btn-primary(@click="login", :updating="updating")
-            i.fa.fa-fwfa-lg.fa-sign-in
-            | 　ログイン
+  .row.justify-content-center
+    .col-md-4
+      Message(global=true)
+      .card.m-2
+        .card-body
+          .card-title.p-1: h5 ログインフォーム
+          .card-text
+            .mb-2
+              InputText.l-row(placeholder="ログインID", v-model="loginId", @enter="login")
+            .mb-2
+              InputText(placeholder="パスワード", v-model="password", password=true, @enter="login")
+            .mb-2
+              CommandButton.btn-primary(@click="login", :updating="updating")
+                i.fas.fa-lg.fa-sign-in-alt
+                | 　ログイン
       .alert.alert-warning サーバ側（サンプル実装版）の認証モードを有効にした時は sample/sample でログインしてください。
 </template>
 

@@ -101,7 +101,7 @@ export class Ajax {
   static handlePreFailure(err) {
     const res = err.response
     if (res.status) {
-      Log.warn(res.status)
+      Log.warn("[" + res.status + "] " + res.statusText)
       switch (res.status) {
         case 0:
           Log.error('接続先が見つかりませんでした')
