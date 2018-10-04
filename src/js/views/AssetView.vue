@@ -1,28 +1,26 @@
 <style lang="scss">
-.tab-pane {
-  padding: 10px 0;
-}
-.l-panel-asset-info {
-  .panel-body {
-    height: 300px;
+.l-card-mock {
+  .card-body {
+    height: 30rem;
   }
 }
 </style>
 
 <template lang="pug">
-.container-fluid
+div
   .row
-    .col-md-4
-      .panel.panel-default.l-panel-mock.l-panel-asset-info
-        .panel-heading
-          i.fa.fa-fw.fa-info-circle
-          |  資産残高
-        .panel-body
-    .col-md-8
-      ul.nav.nav-tabs
-        li: a(href="#deposit" data-toggle="tab") 入金
-        li.active: a(href="#withdrawal" data-toggle="tab") 出金依頼
-        li: a(href="#cashflow" data-toggle="tab") 入出金一覧
+    .col-sm
+      .card.l-card-mock.mb-2
+        .card-body
+          .card-title
+            i.fas.fa-info-circle
+            |  資産残高
+          .card-text
+    .col-sm-8
+      ul.nav.nav-tabs.mb-3
+        li.nav-item: a.nav-link(href="#deposit" data-toggle="tab") 入金
+        li.nav-item: a.nav-link.active(href="#withdrawal" data-toggle="tab") 出金依頼
+        li.nav-item: a.nav-link(href="#cashflow" data-toggle="tab") 入出金一覧
       .tab-content
         .tab-pane#deposit
           |　TBD
@@ -31,14 +29,6 @@
           WithdrawalList
         .tab-pane#cashflow
           |　TBD
-  hr
-  .row
-    .col-md-4
-      .panel.panel-default.l-panel-mock: .panel-body
-    .col-md-4
-      .panel.panel-default.l-panel-mock: .panel-body
-    .col-md-4
-      .panel.panel-default.l-panel-mock: .panel-body
 </template>
 
 <script lang="babel">

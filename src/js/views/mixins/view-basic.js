@@ -1,7 +1,6 @@
-import Param from 'variables'
-import {Level, Event} from 'constants'
+import { upperFirst, camelCase} from "lodash"
+import { Level, Event } from 'constants'
 import * as Lib from "platform/plain"
-import Vue from "vue"
 
 import Message from "components/Message.vue"
 import CommandButton from "components/CommandButton.vue"
@@ -40,7 +39,7 @@ export default {
     // コンポーネントタグ(テンプレートで定義された文字列)を返します。文字列はアッパーキャメルケースで統一して返されます。
     componentTag() {
       let tag = this.$options._componentTag
-      return tag ? _.upperFirst(_.camelCase(tag)) : ""
+      return tag ? upperFirst(camelCase(tag)) : ""
     },
     // メッセージを通知します。
     message(globalMessage = null, columnMessages = [], level = Level.INFO) {
@@ -103,7 +102,7 @@ export default {
       let message = null
       let columns = []
       let level = Level.ERROR
-      switch (error.status) {
+      switch (error.response.status) {
         case 200:
           message = "要求処理は成功しましたが、戻り値の解析に失敗しました"
           break
@@ -123,9 +122,9 @@ export default {
       this.message(message, columns, level)
     },
     parseApiError (error) {
-      let errs = JSON.parse(error.response.text)
+      const errs = error.response.data
       let parsed = {global: null, columns: []}
-      Object.keys(errs).forEach((err) => {
+      Object.keys(error.response.data).forEach((err) => {
         if (err) parsed.columns.push({key: err, messages: errs[err], level: Level.ERROR})
         else parsed.global = errs[err]
       })

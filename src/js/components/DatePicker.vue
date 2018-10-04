@@ -22,12 +22,12 @@ https://chmln.github.io/flatpickr/
 Message(:field="field")
   .input-group
     input.form-control(type="text", :placeholder="placeholder", :value="value", :disabled="updating")
-    span.input-group-btn(v-if="time")
-      button.btn.btn-default
-        i.fa.fa-check
-    span.input-group-btn
-      button.btn.btn-default(@click="clearDate")
-        i.fa.fa-times
+    .input-group-append(v-if="time")
+      button.btn.btn-outline-secondary
+        i.fas.fa-check
+    .input-group-append
+      button.btn.btn-outline-secondary(@click="clearDate")
+        i.fas.fa-times
 </template>
 
 <script lang="babel">
