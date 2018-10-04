@@ -40,7 +40,7 @@ sample-ui-vue
 
 ### 開発の流れ
 
-基本的にテンプレート ( .pug / .scss / .js ( ES6 ) [ .vue ] ) を Web リソース ( .html / .css / .js ) へ Gulp / Webpack でリアルタイム変換させながら開発をしていきます。  
+基本的にテンプレート ( .pug / .scss / .js ( ES201x ) [ .vue ] ) を Web リソース ( .html / .css / .js ) へ Gulp / Webpack でリアルタイム変換させながら開発をしていきます。  
 動作確認は Gulp で独自に Web サーバを立ち上げた後、ブラウザ上で行います。  
 
 #### 各種テンプレートファイルの解説
@@ -49,8 +49,8 @@ sample-ui-vue
     - HTML を生成するテンプレートツール。公式サイト TOP にある簡素な記法が特徴。
 - [Sass (SCSS)](http://sass-lang.com/)
     - CSS 表記を拡張するツール。変数や mixin 、ネスト表記などが利用可能。
-- [ES6 with Babel](https://babeljs.io/)
-    - ES6 用の Polyfill 。 ES5 でも ES6 風に記述が可能。
+- [ES201x with Babel](https://babeljs.io/)
+    - ES201x 用の Polyfill 。 ES5 でも ES201x 風に記述が可能。
 
 #### 各種テンプレートファイルの変更監視 / Web サーバ起動
 
@@ -68,9 +68,7 @@ sample-ui-vue
 ### ポリシー
 
 - JS / CSS の外部ライブラリは npm で管理する
-    - jQuery や Bootstrap 等、グローバルスコープの汚染を許容するものはビルド済みリソースをそのまま流用する
-- プロジェクト固有の JS は Webpack を利用して生成する
-    - グローバルスコープの汚染を許容せずにコンポーネントベースで開発する
+- JS は Webpack を利用して生成する
 - Vue.js の実装アプローチは [vue-hackernews-2.0](https://github.com/vuejs/vue-hackernews-2.0) を参考に
 
 #### ディレクトリ構成
@@ -83,9 +81,9 @@ package.json                         … npm 関連定義
 dist                                 … 配布公開リソース ( 自動生成 )
   css                                … CSS
     - style.css                      … src / css 直下のリソース
-  fonts                              … アイコンフォント
+  webfonts                           … アイコンフォント
   js                                 … JavaScript ( ES5 )
-    - bundle.js                      … src / js 直下のリソース
+    - app.bundle.js                  … src / js 直下のリソース
     - vendor.bundle.js               … 外部JSライブラリ
   index.html
 src
@@ -109,13 +107,14 @@ src
 
 | ライブラリ                    | バージョン   | 用途/追加理由 |
 | ------------------------- | -------- | ------------- |
-| `vue`                     | 2.5.+    | アプリケーションの MVVM 機能を提供 |
-| `vue-router`              | 3.0.+    | Vue.js の SPA ルーティングサポート |
-| `jquery`                  | 3.3.+    | DOM 操作サポート |
-| `lodash`                  | 4.17.+   | 汎用ユーティリティライブラリ |
-| `moment`                  | 2.20.+   | 日時ライブラリ |
-| `bootstrap-sass-official` | 3.3.+    | CSS フレームワーク |
-| `fontawesome`             | 4.7.+    | フォントアイコンライブラリ |
+| `vue`                     | 2.x    | アプリケーションの MVVM 機能を提供 |
+| `vue-router`              | 3.x    | Vue.js の SPA ルーティングサポート |
+| `jquery`                  | 3.3.x    | DOM 操作サポート |
+| `lodash`                  | 4.17.x   | 汎用ユーティリティライブラリ |
+| `bootstrap`               | 4.x    | CSS フレームワーク |
+| `fontawesome-free`        | 5.x    | フォントアイコンライブラリ |
+
+> 詳細は package.json を確認してください
 
 ### License
 
