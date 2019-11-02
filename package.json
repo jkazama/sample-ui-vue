@@ -19,7 +19,7 @@
     "bootstrap": "~4.3.0",
     "flatpickr": "~4.5.0",
     "jquery": "~3.4.0",
-    "lodash": "~4.17.0",
+    "lodash": "~4.17.13",
     "moment": "~2.22.0",
     "popper.js": "~1.14.7",
     "vue": "~2.6.0",
