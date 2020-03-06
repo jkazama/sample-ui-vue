@@ -19,13 +19,11 @@ sample-ui-vue
 
 #### ビルド / テスト稼働環境構築
 
-ビルドは [Node.js](http://nodejs.jp/) + [Webpack](https://webpack.github.io/) + [Gulp](http://gulpjs.com/) + [Yarn](https://yarnpkg.com/) or [npm](https://www.npmjs.com/) で行います。以下の手順でインストールしてください。
+ビルドは [Node.js](http://nodejs.jp/) + [Vue CLI](https://cli.vuejs.org/) + [Yarn](https://yarnpkg.com/) or [npm](https://www.npmjs.com/) で行います。以下の手順でインストールしてください。
 
 1. Node.js の[公式サイト](http://nodejs.jp/)からインストーラをダウンロードしてインストール。
 1. 「 `npm install -g yarn` 」を実行して Yarn をインストール。
     - Mac ユーザは 「 `sudo npm install -g yarn` 」 で。
-1. 「 `npm install -g gulp` 」 を実行して Gulp をインストール。
-    - Mac ユーザは 「 `sudo npm install -g gulp` 」 で。
 1. コンソールで本ディレクトリ直下へ移動後、「 `yarn` 」を実行して `package.json` 内のライブラリをインストール
 
 ### 動作確認
@@ -35,18 +33,16 @@ sample-ui-vue
 1. clone した [sample-boot-hibernate](https://github.com/jkazama/sample-boot-hibernate) を起動する。
     - 起動方法は該当サイトの解説を参照
     - application.yml の `extension.security.auth.enabled` を true にして起動すればログイン機能の確認も可能
-1. コンソールで本ディレクトリ直下へ移動し、 「 `gulp` 」 を実行
+1. コンソールで本ディレクトリ直下へ移動し、 「 `yarn serve` 」 を実行
     - 確認用のブラウザが自動的に起動する。うまく起動しなかったときは 「 http://localhost:3000 」 へアクセス
 
 ### 開発の流れ
 
-基本的にテンプレート ( .pug / .scss / .js ( ES201x ) [ .vue ] ) を Web リソース ( .html / .css / .js ) へ Gulp / Webpack でリアルタイム変換させながら開発をしていきます。  
-動作確認は Gulp で独自に Web サーバを立ち上げた後、ブラウザ上で行います。  
+基本的に .js ( ES201x ) または .vue ファイルを Web リソース ( .html / .css / .js ) へ Vue CLI でリアルタイム変換させながら開発をしていきます。  
+動作確認は Vue CLI が提供する Web サーバを立ち上げた後、ブラウザ上で行います。  
 
 #### 各種テンプレートファイルの解説
 
-- [Pug](https://github.com/pugjs/pug)
-    - HTML を生成するテンプレートツール。公式サイト TOP にある簡素な記法が特徴。
 - [Sass (SCSS)](http://sass-lang.com/)
     - CSS 表記を拡張するツール。変数や mixin 、ネスト表記などが利用可能。
 - [ES201x with Babel](https://babeljs.io/)
@@ -54,54 +50,26 @@ sample-ui-vue
 
 #### 各種テンプレートファイルの変更監視 / Web サーバ起動
 
-+ コンソールで本ディレクトリ直下へ移動し、 「 `gulp` 」 を実行
++ コンソールで本ディレクトリ直下へ移動し、 「 `yarn serve` 」 を実行
 
 ### 配布用ビルドの流れ
 
-配布リソース生成の流れは開発時と同様ですが、監視の必要が無いことと、配布リソースに対する minify や revison の付与などを行う必要があるため、別タスク （ build-prod ） で実行します。
+配布リソース生成の流れは開発時と同様ですが、監視の必要が無いことと、配布リソースに対する minify や revison の付与などを行う必要があるため、別タスクで実行します。
 
 #### 配布用 Web リソースのビルド / リリース
 
-+ コンソールで本ディレクトリ直下へ移動し、 「 `gulp build-prod` 」 を実行
++ コンソールで本ディレクトリ直下へ移動し、 「 `yarn build` 」 を実行
 + `dist` ディレクトリ直下に出力されたファイルをリリース先のディレクトリへコピー
 
 ### ポリシー
 
 - JS / CSS の外部ライブラリは npm で管理する
-- JS は Webpack を利用して生成する
+- JS は Vue CLI を利用して生成する
 - Vue.js の実装アプローチは [vue-hackernews-2.0](https://github.com/vuejs/vue-hackernews-2.0) を参考に
 
 #### ディレクトリ構成
 
-ディレクトリ構成については以下を参照してください。
-
-```
-gulpfile.babel.js                    … gulp 実行時に利用されるビルドファイル
-package.json                         … npm 関連定義
-dist                                 … 配布公開リソース ( 自動生成 )
-  css                                … CSS
-    - style.css                      … src / css 直下のリソース
-  webfonts                           … アイコンフォント
-  js                                 … JavaScript ( ES5 )
-    - app.bundle.js                  … src / js 直下のリソース
-    - vendor.bundle.js               … 外部JSライブラリ
-  index.html
-src
-  css                                … CSS テンプレートファイル ( SCSS )
-  html                               … HTML テンプレートファイル ( Pug )
-  js
-    api                              … API処理 (Vue.js 非依存)
-    components                       … SPA で利用されるコンポーネント
-    filters                          … フィルタ関数
-    platform                         … プロジェクト内JSライブラリ (Vue.js 非依存)
-    router                           … SPA ルーティング定義
-    views                            … 画面コンポーネント
-    - app.js                         … SPA における Entry ファイル
-    - App.vue                        … ページ横断的に利用されるコンポーネント
-  static                             … 画像等コンパイル不要な静的リソースファイル
-```
-
-※ gulp コマンドを実行して変更監視を有効にしておくと、 src 配下のリソースを修正した際にリアルタイムで dist 直下のファイルが更新されていきます。
+ディレクトリ構成については Vue CLI のディレクトリポリシーに準拠します。
 
 ### 依存ライブラリ
 
@@ -109,7 +77,7 @@ src
 | ------------------------- | -------- | ------------- |
 | `vue`                     | 2.x    | アプリケーションの MVVM 機能を提供 |
 | `vue-router`              | 3.x    | Vue.js の SPA ルーティングサポート |
-| `jquery`                  | 3.3.x    | DOM 操作サポート |
+| `jquery`                  | 3.3.x    | DOM 操作サポート (for Bootstrap) |
 | `lodash`                  | 4.17.x   | 汎用ユーティリティライブラリ |
 | `bootstrap`               | 4.x    | CSS フレームワーク |
 | `fontawesome-free`        | 5.x    | フォントアイコンライブラリ |
