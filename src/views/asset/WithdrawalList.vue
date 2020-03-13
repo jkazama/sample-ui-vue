@@ -16,7 +16,7 @@
 <template>
 <div class="row">
   <div class="col">
-    <list-group :fixed=true @bottom="next" :updating="updating">
+    <list-group :fixed=true @bottom="next" :updating="updating" :fixedBottom=60>
       <li class="list-group-item d-flex flex-row" v-for="item in items" :key="item.id">
         <div class="l-item-day text-center">{{item.requestDay | day}}</div>
         <div class="l-item-type text-center">

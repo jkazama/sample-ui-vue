@@ -27,10 +27,10 @@
 </template>
 
 <script>
-import { Level } from "@/enums"
-import { Log } from "@/platform/plain"
-import ViewBasic from "@/views/mixins/view-basic"
-import api from "@/api/context"
+import { Level } from "@/enums";
+import { Log, Session } from "@/platform/plain";
+import ViewBasic from "@/views/mixins/view-basic";
+import api from "@/api/context";
 export default {
   name: 'login-view',
   mixins: [ ViewBasic ],
@@ -42,30 +42,30 @@ export default {
   },
   methods: {
     login() {
-      Log.debug(this.loginId)
-      this.updating = true
-      let success = (ret) => {
-        this.updating = false
-        Log.debug("ログインに成功しました - ")
-        this.forward()
+      Log.debug(this.loginId);
+      this.updating = true;
+      const success = (ret) => {
+        this.updating = false;
+        Log.debug("ログインに成功しました - ");
+        this.forward();
       }
-      let failure = (error) => {
-        this.updating = false
+      const failure = (error) => {
+        this.updating = false;
         switch (error.response.status) {
           case 400:
-            this.messageError("IDまたはパスワードに誤りがあります", [], Level.WARN)
-            break
+            this.messageError("IDまたはパスワードに誤りがあります", [], Level.WARN);
+            break;
           default:
-            this.messageError("要求処理に失敗しました")
+            this.messageError("要求処理に失敗しました");
         }
       }
-      api.login({loginId: this.loginId, password: this.password}, success, failure)
+      api.login({loginId: this.loginId, password: this.password}, success, failure);
     },
     forward() {
       api.loginAccount(v => {
-        this.loginSession(v)
-        this.$router.push("/asset")
-      })
+        Session.login(v);
+        this.$router.push("/asset");
+      });
     }    
   }
 }

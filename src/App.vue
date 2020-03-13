@@ -82,17 +82,17 @@ export default {
   },
   computed: {
     user() {
-      let logined = Session.value();
+      const logined = Session.value();
       return logined ? logined : {name: "Anonymous"};
     }
   },
   methods: {
     checkLogin(to, from, next) {
-      let success = v => {
+      const success = v => {
         this.logined = true;
         next();
       };
-      let failure = err => {
+      const failure = err => {
         Log.debug("ログイン情報を確認できませんでした");
         const current = this.logined; // 事前ログイン状態に応じて表示ページを変更
         this.logoutLocal();
