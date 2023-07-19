@@ -19,6 +19,17 @@ export const useStore = defineStore("app", {
       authorityIds: [],
     } as User,
   }),
+  getters: {
+    isAdmin(state): boolean {
+      switch (state.user.roleType) {
+        case ActorRoleType.INTERNAL:
+        case ActorRoleType.ADMINISTRATOR:
+          return true;
+        default:
+          return false;
+      }
+    },
+  },
   actions: {
     login(user: LoginAccount) {
       this.user = user;

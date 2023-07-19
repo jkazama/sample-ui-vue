@@ -5,7 +5,7 @@ import { defineStore } from "pinia";
 export type Messages = {
   global: string;
   level: Level;
-  columns: Map<string, string[]>;
+  columns: Record<string, string[]>;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -35,7 +35,7 @@ export const useEventStore = defineStore("event", {
     notify(
       globalMessage: string,
       level: Level = Level.INFO,
-      columnMessages: Map<string, string[]> = {} as Map<string, string[]>
+      columnMessages: Record<string, string[]> = {} as Record<string, string[]>
     ): void {
       this.messages = {
         global: globalMessage || "",

@@ -1,27 +1,27 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-import UserDeposit from "./UserDeposit.vue";
-import UserWithdraw from "./UserWithdraw.vue";
-import UserCashflow from "./UserCashflow.vue";
+import AdminDeposit from "./asset/AdminDeposit.vue";
+import AdminWithdraw from "./asset/AdminWithdraw.vue";
+import AdminCashflow from "./asset/AdminCashflow.vue";
 
 const tab = ref("withdraw");
 </script>
 <template>
   <div>
-    <v-tabs v-model="tab" bg-color="blue-grey-lighten-2">
+    <v-tabs v-model="tab" bg-color="grey-lighten-2">
       <v-tab value="deposit">Deposit</v-tab>
       <v-tab value="withdraw">Withdraw</v-tab>
       <v-tab value="cashflow">Cashflow</v-tab>
     </v-tabs>
     <v-window v-model="tab">
       <v-window-item value="deposit" transition="no">
-        <UserDeposit />
+        <AdminDeposit />
       </v-window-item>
       <v-window-item value="withdraw" transition="no">
-        <UserWithdraw />
+        <AdminWithdraw />
       </v-window-item>
       <v-window-item value="cashflow" transition="no">
-        <UserCashflow />
+        <AdminCashflow />
       </v-window-item>
     </v-window>
   </div>

@@ -5,7 +5,7 @@
     <v-card
       class="ma-4"
       width="300"
-      title="Trade"
+      title="Admin Trade"
       subtitle="This is a subtitle"
     >
       <v-card-text class="text-red text-body-1">

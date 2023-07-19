@@ -1,26 +1,37 @@
-# default
+## sample-ui-vue
 
-## Project setup
+## Preface
 
-```
-# npm
-npm install
-```
+Project web resource ( HTML / CSS / JS ) based on [Vuetify](https://vuetifyjs.com) / [Vue.js](https://vuejs.org). It assumes the SPA ( Single Page Application ) model.
 
-### Compiles and hot-reloads for development
+This is a simple implementation sample using the above libraries, not the library.
 
-```
-# npm
-npm run dev
-```
+We expect one of the following as an API server for sample confirmation.
 
-### Compiles and minifies for production
+- [sample-boot-jpa](https://github.com/jkazama/sample-boot-jpa)
 
-```
-# npm
-npm run build
-```
+#### Getting Started
 
-### Customize configuration
+Frontend Start (VSCode DevContainer)
+It is necessary to do the following step.
 
-See [Configuration Reference](https://vitejs.dev/config/).
+- Check Instablled Docker.
+- Check Instablled VSCode with DevContainer Extension.
+- API Server Started.
+
+Do the preparations for this sample in the next step.
+
+- You move to the cloned `sample-ui-vue` directory.
+- Run command `code .`
+- Choose Open Container
+
+Do the dev server start in the next step.
+
+- Open VSCode Terminal.
+- `npm run dev`
+- Open Browser with `http://localhost:3000`
+
+### License
+
+The license of this sample includes a code and is all _MIT License_.
+Use it as a base implementation at the time of the project start using Spring Boot.

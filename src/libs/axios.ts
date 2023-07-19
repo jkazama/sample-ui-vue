@@ -1,5 +1,6 @@
 import Axios, { AxiosError } from "axios";
-import { Log } from "./log";
+import { Level, Log } from "./log";
+import { useEventStore } from "@/store/event";
 export const axios = Axios.create({
   baseURL: import.meta.env.VITE_APP_API_ROOT,
   headers: {
@@ -32,6 +33,12 @@ axios.interceptors.response.use(
         case 400:
           if (res.data) {
             Log.warn(res.data);
+            const columnMessages = res.data as Record<string, string[]>;
+            useEventStore().notify(
+              "Please confirm your input.",
+              Level.WARN,
+              columnMessages
+            );
           }
           break;
         case 401:

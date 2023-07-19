@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { login } from "@/api/context";
 import { Level } from "@/libs/log";
 import { useEventStore } from "@/store/event";
-import router from "@/router";
 import { checkLogin } from "@/libs/app";
-
+const router = useRouter();
 const event = useEventStore();
 
 export interface Props {
@@ -28,7 +28,8 @@ const doLogin = () => {
   login(req)
     .then(() => {
       checkLogin(() => {
-        router.push("/home");
+        const path = props.admin ? "/admin/home" : "/user/home";
+        router.push(path);
       });
     })
     .catch(() => {
@@ -41,7 +42,10 @@ const doLogin = () => {
   <v-container>
     <v-row no-gutters>
       <v-col lg="6" offset-lg="3" sm="8" offset-sm="2" xs="10" offset-xs="1">
-        <v-card color="primary" variant="outlined">
+        <v-card
+          :color="props.admin ? 'secondary' : 'primary'"
+          variant="outlined"
+        >
           <v-card-title>
             Login Form<span v-if="props.admin"> for Admin</span>
           </v-card-title>
@@ -60,6 +64,22 @@ const doLogin = () => {
             <Btn @click="doLogin"> Sign In </Btn>
           </v-card-text>
         </v-card>
+        <div class="d-flex justify-end">
+          <router-link
+            class="pa-2 text-body-2 text-decoration-none text-grey-darken-2"
+            to="/user/login"
+            v-if="props.admin"
+          >
+            for User
+          </router-link>
+          <router-link
+            class="pa-2 text-body-2 text-decoration-none text-blue-grey-darken-2"
+            to="/admin/login"
+            v-else
+          >
+            for Admin
+          </router-link>
+        </div>
       </v-col>
     </v-row>
   </v-container>

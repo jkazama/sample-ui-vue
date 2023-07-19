@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { useStore } from "@/store/app";
 import { LogoutKey, useEventStore } from "@/store/event";
-import router from "@/router";
-import { isAdmin } from "@/libs/app";
-import { computed } from "vue";
+
+const router = useRouter();
 
 const store = useStore();
 const event = useEventStore();
@@ -13,11 +13,9 @@ const brandName = "Sample";
 
 const drawer = ref(false);
 
-const admin = computed(() => isAdmin());
-
 const doLogout = () => {
-  event.emit(LogoutKey, null);
-  router.push(admin.value ? "/admin" : "/login");
+  event.emit(LogoutKey, undefined);
+  router.push("/user/login");
 };
 </script>
 
@@ -43,7 +41,7 @@ const doLogout = () => {
           prepend-icon="mdi-home"
           variant="text"
           class="text-capitalize"
-          to="/home"
+          to="/user/home"
         >
           Home
         </v-btn>
@@ -51,7 +49,7 @@ const doLogout = () => {
           prepend-icon="mdi-monitor"
           variant="text"
           class="text-capitalize"
-          to="/trade"
+          to="/user/trade"
         >
           Trade
         </v-btn>
@@ -59,18 +57,9 @@ const doLogout = () => {
           prepend-icon="mdi-bank"
           variant="text"
           class="text-capitalize"
-          to="/asset"
+          to="/user/asset"
         >
           Asset
-        </v-btn>
-        <v-btn
-          prepend-icon="mdi-cogs"
-          variant="text"
-          class="text-capitalize"
-          to="/system"
-          v-if="admin"
-        >
-          System
         </v-btn>
       </div>
       <template v-slot:append>
@@ -102,29 +91,23 @@ const doLogout = () => {
       <v-list :lines="false" density="compact" nav>
         <v-list-item :title="brandName"></v-list-item>
         <v-divider></v-divider>
-        <v-list-item @click="router.push('/home')">
+        <v-list-item @click="router.push('/user/home')">
           <template v-slot:prepend>
             <v-icon>mdi-home</v-icon>
           </template>
           <v-list-item-title>Home</v-list-item-title>
         </v-list-item>
-        <v-list-item @click="router.push('/trade')">
+        <v-list-item @click="router.push('/user/trade')">
           <template v-slot:prepend>
             <v-icon>mdi-monitor</v-icon>
           </template>
           <v-list-item-title>Trade</v-list-item-title>
         </v-list-item>
-        <v-list-item @click="router.push('/asset')">
+        <v-list-item @click="router.push('/user/asset')">
           <template v-slot:prepend>
             <v-icon>mdi-bank</v-icon>
           </template>
           <v-list-item-title>Asset</v-list-item-title>
-        </v-list-item>
-        <v-list-item @click="router.push('/system')">
-          <template v-slot:prepend>
-            <v-icon>mdi-cogs</v-icon>
-          </template>
-          <v-list-item-title>System</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>

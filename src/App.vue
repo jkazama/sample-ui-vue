@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Notification, Header } from "@/components/common";
+import { Notification } from "@/components/common";
 import { useEventStore, LogoutKey, LoginedKey } from "@/store/event";
 import { useStore } from "@/store/app";
 import { logout } from "@/api/context";
@@ -22,7 +22,6 @@ event.on(LogoutKey, async () => {
 
 <template>
   <v-app>
-    <Header />
     <v-main>
       <router-view />
     </v-main>

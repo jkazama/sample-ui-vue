@@ -1,4 +1,12 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+export interface Props {
+  admin?: boolean;
+}
+const props = withDefaults(defineProps<Props>(), {
+  admin: false,
+});
+const prefix = props.admin ? "/admin" : "/user";
+</script>
 
 <template>
   <v-container>
@@ -12,7 +20,7 @@
             </v-alert>
           </v-card-text>
           <v-card-actions class="pa-2">
-            <Btn variant="outlined" to="/login"> to Login </Btn>
+            <Btn variant="outlined" :to="prefix + '/login'"> to Login </Btn>
           </v-card-actions>
         </v-card>
       </v-col>

@@ -1,18 +1,6 @@
 import { loginAccount, loginStatus } from "@/api/context";
 import { useStore } from "@/store/app";
 import { LoginedKey, LogoutKey, useEventStore } from "@/store/event";
-import { ActorRoleType } from "@/types";
-
-export const isAdmin = () => {
-  const store = useStore();
-  switch (store.user.roleType) {
-    case ActorRoleType.INTERNAL:
-    case ActorRoleType.ADMINISTRATOR:
-      return true;
-    default:
-      return false;
-  }
-};
 
 export const checkLogin = async (
   success: () => void = () => {},
@@ -30,7 +18,17 @@ export const checkLogin = async (
     event.emit(LoginedKey, user);
     success();
   } catch (err) {
-    event.emit(LogoutKey, null);
+    event.emit(LogoutKey, undefined);
     failure();
+  }
+};
+
+export const formatAmount = (v: string): string => {
+  if (v) {
+    return v.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+  } else if (v === "0") {
+    return "0";
+  } else {
+    return "";
   }
 };

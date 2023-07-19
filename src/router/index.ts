@@ -1,25 +1,47 @@
 // Composables
-import { createRouter, createWebHashHistory } from "vue-router";
-import AppLogin from "@/views/AppLogin.vue";
-import AdminLogin from "@/views/AdminLogin.vue";
-import AppTimeout from "@/views/AppTimeout.vue";
-import AppHome from "@/views/AppHome.vue";
-import AppTrade from "@/views/AppTrade.vue";
-import AppAsset from "@/views/AppAsset.vue";
-import AppSystem from "@/views/AppSystem.vue";
 import { nextTick } from "vue";
+import { RouteRecordRaw, createRouter, createWebHashHistory } from "vue-router";
+import { AppLogin, AppTimeout, AppUser, AppAdmin } from "@/views";
+import { UserHome, UserTrade, UserAsset } from "@/views/user";
+import { AdminHome, AdminTrade, AdminAsset, AdminSystem } from "@/views/admin";
 import { checkLogin } from "@/libs/app";
 import { useStore } from "@/store/app";
 
-const routes = [
-  { path: "/login", component: AppLogin, meta: { anonymous: true } },
-  { path: "/admin", component: AdminLogin, meta: { anonymous: true } },
-  { path: "/timeout", component: AppTimeout, meta: { anonymous: true } },
-  { path: "/home", component: AppHome },
-  { path: "/trade", component: AppTrade },
-  { path: "/asset", component: AppAsset },
-  { path: "/system", component: AppSystem },
-  { path: "/:pathMatch(.*)*", redirect: "/login" },
+const routes: RouteRecordRaw[] = [
+  {
+    path: "/user",
+    component: AppUser,
+    children: [
+      { path: "login", component: AppLogin, meta: { anonymous: true } },
+      { path: "timeout", component: AppTimeout, meta: { anonymous: true } },
+      { path: "home", component: UserHome },
+      { path: "trade", component: UserTrade },
+      { path: "asset", component: UserAsset },
+    ],
+  },
+  {
+    path: "/admin",
+    component: AppAdmin,
+    children: [
+      {
+        path: "login",
+        component: AppLogin,
+        props: { admin: true },
+        meta: { anonymous: true },
+      },
+      {
+        path: "timeout",
+        component: AppTimeout,
+        props: { admin: true },
+        meta: { anonymous: true },
+      },
+      { path: "home", component: AdminHome },
+      { path: "trade", component: AdminTrade },
+      { path: "asset", component: AdminAsset },
+      { path: "system", component: AdminSystem },
+    ],
+  },
+  { path: "/:pathMatch(.*)*", redirect: "/user/login" },
 ];
 
 const router = createRouter({
@@ -27,15 +49,21 @@ const router = createRouter({
   routes,
 });
 router.beforeEach((to, from, next) => {
-  if (to.matched.some((m) => m.meta.anonymous)) {
+  if (
+    to.matched
+      .filter((m) => m.children.length == 0)
+      ?.some((m) => m.meta.anonymous)
+  ) {
     next();
   } else {
     nextTick(() => {
       const store = useStore();
       const current = store.logined;
+      const prefix =
+        from && 0 <= from.path.indexOf("/admin") ? "/admin" : "/user";
       checkLogin(
         () => next(),
-        () => (current ? next("/timeout") : next("/login"))
+        () => (current ? next(prefix + "/timeout") : next(prefix + "/login"))
       );
     });
   }
