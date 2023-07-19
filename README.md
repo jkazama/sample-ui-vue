@@ -30,6 +30,8 @@ Do the dev server start in the next step.
 - Open VSCode Terminal.
 - `npm run dev`
 - Open Browser with `http://localhost:3000`
+    - User Login ID/Pass. sample / sample
+    - Admin Login ID/Pass. admin / admin
 
 ### License
 
